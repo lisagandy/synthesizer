@@ -10,38 +10,58 @@
 @import <AppKit/AppKit.j>
 @import "Base/CMURL.j"
 @import "Base/CMCommon.j"
+@import "Views/CMMainView.j"
+@import "Views/CMSidebarView.j"
 
 @implementation AppController : CPObject
 {
+	CPTextField label;
+	CPArray csvFileURLs;
+	
+	CMMainView mainView;
+	CMSidebarView sidebarView;
 }
 
 - (void)applicationDidFinishLaunching:(CPNotification)aNotification
 {
-	var theWindow = [[CPWindow alloc] initWithContentRect:CGRectMakeZero() styleMask:CPBorderlessBridgeWindowMask],
-	contentView = [theWindow contentView];
-
-	var label = [[CPTextField alloc] initWithFrame:CGRectMakeZero()];
-
-	[label setStringValue:@"Hello World!"];
-	[label setFont:[CPFont boldSystemFontOfSize:24.0]];
-
-	[label sizeToFit];
-
-	[label setAutoresizingMask:CPViewMinXMargin | CPViewMaxXMargin | CPViewMinYMargin | CPViewMaxYMargin];
-	[label setCenter:[contentView center]];
-
-	[contentView addSubview:label];
+	[[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(urlLoaded:) name:CMURLLoadedNotification object:nil];
 	
-	var arguments = [[CPApplication sharedApplication] arguments];
-	var urls = [CPMutableArray array];
-	for (var i = 0; i < [arguments count]; i++) {
-		[urls addObject:[[CMURL alloc] initWithURLString:[arguments objectAtIndex:i] notificationString:CMURLLoadedNotification]];
-	}
-
-	[theWindow orderFront:self];
-
+	[self parseArguments];
+	[self setupViews];
+	
 	// Uncomment the following line to turn on the standard menu bar.
 	//[CPMenu setMenuBarVisible:YES];
+}
+
+- (void)parseArguments {
+	var arguments = [[CPApplication sharedApplication] arguments];
+	csvFileURLs = [CPMutableArray array];
+	for (var i = 0; i < [arguments count]; i++) {
+		[csvFileURLs addObject:[[CMURL alloc] initWithURLString:[arguments objectAtIndex:i] completionNotification:CMURLLoadedNotification]];
+	}
+}
+
+- (void)setupViews {
+	var theWindow = [[CPWindow alloc] initWithContentRect:CGRectMakeZero() styleMask:CPBorderlessBridgeWindowMask],
+	contentView = [theWindow contentView];
+	var bounds = [contentView bounds];
+
+	sidebarView = [[CMSidebarView alloc] initWithFrame:CGRectMake(bounds.origin.x, bounds.origin.y, 240., bounds.size.height)];
+	[sidebarView setBackgroundColor:[CPColor blackColor]];
+	[sidebarView setAutoresizingMask:CPViewMaxXMargin | CPViewHeightSizable];
+	
+	mainView = [[CMMainView alloc] initWithFrame:CGRectMake(bounds.origin.x + 240., bounds.origin.y, bounds.size.width - 240., bounds.size.height)];
+	[mainView setBackgroundColor:[CPColor blackColor]];
+	[mainView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
+
+	[contentView addSubview:mainView];
+	[contentView addSubview:sidebarView];
+
+	[theWindow orderFront:self];
+}
+
+- (void)urlLoaded:(CPNotification)notify {
+	[label setStringValue:[[notify object] data]];
 }
 
 @end
