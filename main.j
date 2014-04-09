@@ -1,9 +1,9 @@
 /*
  * AppController.j
- * NewApplication
+ * ColumnMerger
  *
- * Created by You on November 28, 2013.
- * Copyright 2013, Your Company All rights reserved.
+ * Created by Mike Piatek-Jimenez on November 28, 2013.
+ * Copyright 2013, Gaucho Software, LLC.  All rights reserved.
  */
 
 @import <Foundation/Foundation.j>
