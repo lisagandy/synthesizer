@@ -1,0 +1,9 @@
+/*
+ * CMCommon.j
+ * ColumnMerger
+ *
+ * Created by Mike Piatek-Jimenez on November 28, 2013.
+ * Copyright 2013, Gaucho Software, LLC.  All rights reserved.
+ */
+
+CMURLLoadedNotification = "CMURLLoadedNotification";
