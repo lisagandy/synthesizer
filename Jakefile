@@ -1,9 +1,9 @@
 /*
  * Jakefile
- * NewApplication
+ * ColumnMerger
  *
- * Created by You on November 28, 2013.
- * Copyright 2013, Your Company All rights reserved.
+ * Created by Mike Piatek-Jimenez on November 28, 2013.
+ * Copyright 2013, Gaucho Software, LLC.  All rights reserved.
  */
 
 var ENV = require("system").env,
@@ -14,7 +14,7 @@ var ENV = require("system").env,
     app = require("cappuccino/jake").app,
     configuration = ENV["CONFIG"] || ENV["CONFIGURATION"] || ENV["c"] || "Debug",
     OS = require("os"),
-    projectName = "NewApplication";
+    projectName = "ColumnMerger";
 
 app (projectName, function(task)
 {
@@ -23,15 +23,15 @@ app (projectName, function(task)
     if (configuration === "Debug")
         ENV["OBJJ_INCLUDE_PATHS"] = FILE.join(ENV["OBJJ_INCLUDE_PATHS"], configuration);
 
-    task.setBuildIntermediatesPath(FILE.join("Build", "NewApplication.build", configuration));
+    task.setBuildIntermediatesPath(FILE.join("Build", "ColumnMerger.build", configuration));
     task.setBuildPath(FILE.join("Build", configuration));
 
-    task.setProductName("NewApplication");
-    task.setIdentifier("com.yourcompany.NewApplication");
+    task.setProductName("ColumnMerger");
+    task.setIdentifier("com.gauchosoft.ColumnMerger");
     task.setVersion("1.0");
-    task.setAuthor("Your Company");
+    task.setAuthor("Gaucho Software, LLC.");
     task.setEmail("feedback @nospam@ yourcompany.com");
-    task.setSummary("NewApplication");
+    task.setSummary("ColumnMerger");
     task.setSources(new FileList("**/*.j").exclude(FILE.join("Build", "**")).exclude(FILE.join("Frameworks", "Source", "**")));
     task.setResources(new FileList("Resources/**"));
     task.setIndexFilePath("index.html");
@@ -85,13 +85,13 @@ task ("deploy", ["release"], function()
 task ("desktop", ["release"], function()
 {
     FILE.mkdirs(FILE.join("Build", "Desktop", projectName));
-    require("cappuccino/nativehost").buildNativeHost(FILE.join("Build", "Release", projectName), FILE.join("Build", "Desktop", projectName, "NewApplication.app"));
+    require("cappuccino/nativehost").buildNativeHost(FILE.join("Build", "Release", projectName), FILE.join("Build", "Desktop", projectName, "ColumnMerger.app"));
     printResults("Desktop")
 });
 
 task ("run-desktop", ["desktop"], function()
 {
-    OS.system([FILE.join("Build", "Desktop", projectName, "NewApplication.app", "Contents", "MacOS", "NativeHost"), "-i"]);
+    OS.system([FILE.join("Build", "Desktop", projectName, "ColumnMerger.app", "Contents", "MacOS", "NativeHost"), "-i"]);
 });
 
 function printResults(configuration)
