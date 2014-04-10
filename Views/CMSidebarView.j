@@ -13,14 +13,36 @@
 {
 	CGPoint originalClickInWindow;
 	CGRect originalFrame;
-
-	CPTextField label;
+	
+	CPScrollView scrollView;
+	CPOutlineView outlineView;
+	
+	CPDictionary items;
 }
 
 - (id)initWithFrame:(CGRect)aFrame {
 	self = [super initWithFrame:aFrame];
 	if (self) {
-	} 
+		scrollView = [[CPScrollView alloc] initWithFrame:[self bounds]];
+		[scrollView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
+		[scrollView setAutohidesScrollers:YES];
+		[scrollView setHasHorizontalScroller:NO];
+		
+		outlineView = [[CPOutlineView alloc] initWithFrame:[[scrollView contentView] bounds]];
+		[outlineView setHeaderView:nil];
+		[outlineView setCornerView:nil];
+		
+		var textColumn = [[CPTableColumn alloc] initWithIdentifier:@"TextColumn"];
+		[textColumn setWidth:[self bounds].size.width];
+		[outlineView addTableColumn:textColumn];
+		[outlineView setOutlineTableColumn:textColumn];
+		
+		[scrollView setDocumentView:outlineView];
+		[self addSubview:scrollView];
+		
+		items = [CPDictionary dictionaryWithObjects:[[@"glossary 1"], [@"proj 1", @"proj 2", @"proj 3"]] forKeys:[@"Glossaries", @"Projects"]];
+		[outlineView setDataSource:self];
+	}
 	return self;
 }
 
@@ -30,6 +52,39 @@
 
 	CGContextSetFillColor(context, [CPColor blueColor]); 
 	CGContextFillRect(context, CGRectMake(bounds.origin.x + 5, bounds.origin.y + 5, bounds.size.width - 10., bounds.size.height - 10.)); 
+}
+
+
+- (id)outlineView:(CPOutlineView)outlineV child:(int)index ofItem:(id)item {
+	CPLog("outlineView:%@ child:%@ ofItem:%@", outlineView, index, item);
+	
+	if (item == nil) {
+		var keys = [items allKeys];
+		return [keys objectAtIndex:index];
+	}
+	else {
+		var values = [items objectForKey:item];
+		return [values objectAtIndex:index];
+	}
+}
+ 
+- (BOOL)outlineView:(CPOutlineView)outlineV isItemExpandable:(id)item {
+	var values = [items objectForKey:item];
+	return ([values count] > 0);
+}
+ 
+- (int)outlineView:(CPOutlineView)outlineV numberOfChildrenOfItem:(id)item {
+	if (item == nil) {
+		return [items count];
+	}
+	else {
+		var values = [items objectForKey:item];
+		return [values count];
+	}
+}
+ 
+- (id)outlineView:(CPOutlineView)outlineV objectValueForTableColumn:(CPTableColumn)tableColumn byItem:(id)item {
+    return item;   
 }
 
 /*
