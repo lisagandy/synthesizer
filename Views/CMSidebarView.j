@@ -25,14 +25,13 @@
 	self = [super initWithFrame:aFrame];
 	if (self) {
 		scrollView = [[CPScrollView alloc] initWithFrame:[self bounds]];
-		[scrollView setAutohidesScrollers:YES];
-		[scrollView setHasHorizontalScroller:NO];
 		[scrollView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
+		[scrollView setAutohidesScrollers:NO];
+		[scrollView setHasHorizontalScroller:NO];
 		
 		collectionView = [[CPCollectionView alloc] initWithFrame:[[scrollView contentView] bounds]];
-		[collectionView setAutoresizingMask:CPViewHeightSizable];
-		[collectionView setMinItemSize:CGSizeMake([self bounds].size.width, 24)];
-		[collectionView setMaxItemSize:CGSizeMake([self bounds].size.width, 240)];
+		[collectionView setMinItemSize:CGSizeMake([self bounds].size.width, 34)];
+		[collectionView setMaxItemSize:CGSizeMake([self bounds].size.width, 34)];
 		[collectionView setMaxNumberOfColumns:1];
 		[collectionView setVerticalMargin:1.];
 		[collectionView setBackgroundColor:[CPColor colorWithHexString:@"dce0e2"]];  // between this and the 1px vertical margin, we get line separators.
@@ -45,7 +44,7 @@
 		[scrollView setDocumentView:collectionView];
 		[self addSubview:scrollView];
 		
-		items =[ @"foo", @"goo", @"roo", @"moo", @"a", @"b", @"c", @"d", @"e", @"f", @"g", @"h", @"i", @"j", @"k", @"l" ];
+		items = [ @"foo", @"goo", @"roo", @"moo", @"a", @"b", @"c", @"d", @"e", @"f", @"g", @"h", @"i", @"j", @"k", @"l", @"a", @"b", @"c", @"d", @"e", @"f", @"g", @"h", @"i", @"j", @"k", @"l" ];
 		[collectionView setContent:items];
 	}
 	return self;
