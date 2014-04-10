@@ -45,13 +45,17 @@
 }
 
 - (void)connection:(CPURLConnection)aConnection didReceiveData:(CPString)d {
-	data = [data stringByAppendingString:d];
+	if (aConnection == connection) {
+		data = [data stringByAppendingString:d];
+	}
 }
 
-- (void)connectionDidFinishLoading:(CPURLConnection)connection {
-	completed = YES;
-	loading = NO;
-	[[CPNotificationCenter defaultCenter] postNotificationName:completionNotificationName object:self];
+- (void)connectionDidFinishLoading:(CPURLConnection)aConnection {
+	if (aConnection == connection) {
+		completed = YES;
+		loading = NO;
+		[[CPNotificationCenter defaultCenter] postNotificationName:completionNotificationName object:self];
+	}
 }
 
 - (void)connection:(CPURLConnection)aConnection didFailWithError:(CPError)anError {

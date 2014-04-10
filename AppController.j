@@ -60,7 +60,7 @@
 }
 
 - (void)urlLoaded:(CPNotification)notify {
-	[label setStringValue:[[notify object] data]];
+/* 	alert([[notify object] data]); */
 }
 
 @end

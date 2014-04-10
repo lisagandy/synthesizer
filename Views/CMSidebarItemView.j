@@ -52,7 +52,7 @@
 
 - (void)setRepresentedObject:(id)anObject {
 	if (!label) {
-		label = [[CPTextField alloc] initWithFrame:CGRectInset([self bounds], 5.0, 5.0)];
+		label = [[CPTextField alloc] initWithFrame:CGRectInset([self bounds], 10.0, 0)];
 		[label setFont:[CPFont boldSystemFontOfSize:14.0]];
 		[label setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
 		[label setVerticalAlignment:CPCenterVerticalTextAlignment];

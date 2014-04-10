@@ -6,4 +6,5 @@
  * Copyright 2013, Gaucho Software, LLC.  All rights reserved.
  */
 
+// Notifications
 CMURLLoadedNotification = "CMURLLoadedNotification";

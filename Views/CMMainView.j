@@ -28,7 +28,7 @@
 	var bounds = [self bounds]; 
 	var context = [[CPGraphicsContext currentContext] graphicsPort]; 
 
-	CGContextSetFillColor(context, [CPColor purpleColor]); 
+	CGContextSetFillColor(context, [CPColor yellowColor]); 
 	CGContextFillRect(context, CGRectMake(bounds.origin.x + 5, bounds.origin.y + 5, bounds.size.width - 10., bounds.size.height - 10.)); 
 }
 
