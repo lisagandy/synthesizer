@@ -46,8 +46,7 @@
 	contentView = [theWindow contentView];
 	var bounds = [contentView bounds];
 
-	sidebarView = [[CMSidebarView alloc] initWithFrame:CGRectMake(bounds.origin.x, bounds.origin.y, 240., bounds.size.height)];
-	[sidebarView setBackgroundColor:[CPColor blackColor]];
+	sidebarView = [[CMSidebarView alloc] initWithFrame:CGRectMake(bounds.origin.x - 2., bounds.origin.y, 240. + 2., bounds.size.height)];	// 2px to accomodate from the horzontal spacing in the collection view.
 	[sidebarView setAutoresizingMask:CPViewMaxXMargin | CPViewHeightSizable];
 	
 	mainView = [[CMMainView alloc] initWithFrame:CGRectMake(bounds.origin.x + 240., bounds.origin.y, bounds.size.width - 240., bounds.size.height)];

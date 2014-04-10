@@ -8,6 +8,7 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
+@import "CMSidebarItemView.j"
 
 @implementation CMSidebarView : CPView
 {
@@ -15,37 +16,42 @@
 	CGRect originalFrame;
 	
 	CPScrollView scrollView;
-	CPOutlineView outlineView;
+	CPCollectionView collectionView;
 	
-	CPDictionary items;
+	CPArray items;
 }
 
 - (id)initWithFrame:(CGRect)aFrame {
 	self = [super initWithFrame:aFrame];
 	if (self) {
 		scrollView = [[CPScrollView alloc] initWithFrame:[self bounds]];
-		[scrollView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
 		[scrollView setAutohidesScrollers:YES];
 		[scrollView setHasHorizontalScroller:NO];
+		[scrollView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
 		
-		outlineView = [[CPOutlineView alloc] initWithFrame:[[scrollView contentView] bounds]];
-		[outlineView setHeaderView:nil];
-		[outlineView setCornerView:nil];
+		collectionView = [[CPCollectionView alloc] initWithFrame:[[scrollView contentView] bounds]];
+		[collectionView setAutoresizingMask:CPViewHeightSizable];
+		[collectionView setMinItemSize:CGSizeMake([self bounds].size.width, 24)];
+		[collectionView setMaxItemSize:CGSizeMake([self bounds].size.width, 240)];
+		[collectionView setMaxNumberOfColumns:1];
+		[collectionView setVerticalMargin:1.];
+		[collectionView setBackgroundColor:[CPColor colorWithHexString:@"dce0e2"]];  // between this and the 1px vertical margin, we get line separators.
+		[collectionView setDelegate:self];
 		
-		var textColumn = [[CPTableColumn alloc] initWithIdentifier:@"TextColumn"];
-		[textColumn setWidth:[self bounds].size.width];
-		[outlineView addTableColumn:textColumn];
-		[outlineView setOutlineTableColumn:textColumn];
-		
-		[scrollView setDocumentView:outlineView];
+		var itemPrototype = [[CPCollectionViewItem alloc] init];
+		[itemPrototype setView:[[CMSidebarItemView alloc] initWithFrame:CGRectMakeZero()]];
+		[collectionView setItemPrototype:itemPrototype];
+
+		[scrollView setDocumentView:collectionView];
 		[self addSubview:scrollView];
 		
-		items = [CPDictionary dictionaryWithObjects:[[@"glossary 1"], [@"proj 1", @"proj 2", @"proj 3"]] forKeys:[@"Glossaries", @"Projects"]];
-		[outlineView setDataSource:self];
+		items =[ @"foo", @"goo", @"roo", @"moo", @"a", @"b", @"c", @"d", @"e", @"f", @"g", @"h", @"i", @"j", @"k", @"l" ];
+		[collectionView setContent:items];
 	}
 	return self;
 }
 
+/*
 - (void)drawRect:(CGRect)rect {
 	var bounds = [self bounds]; 
 	var context = [[CPGraphicsContext currentContext] graphicsPort]; 
@@ -53,8 +59,18 @@
 	CGContextSetFillColor(context, [CPColor blueColor]); 
 	CGContextFillRect(context, CGRectMake(bounds.origin.x + 5, bounds.origin.y + 5, bounds.size.width - 10., bounds.size.height - 10.)); 
 }
+*/
+
+- (CPData)collectionView:(CPCollectionView)aCollectionView dataForItemsAtIndexes:(CPIndexSet)indices forType:(CPString)aType {
+	return [CPKeyedArchiver archivedDataWithRootObject:[items objectAtIndex:[indices firstIndex]]];
+}
+
+- (CPArray)collectionView:(CPCollectionView)aCollectionView dragTypesForItemsAtIndexes:(CPIndexSet)indices {
+	return ["CMSidebarItemType"];
+}
 
 
+/*
 - (id)outlineView:(CPOutlineView)outlineV child:(int)index ofItem:(id)item {
 	CPLog("outlineView:%@ child:%@ ofItem:%@", outlineView, index, item);
 	
@@ -86,6 +102,7 @@
 - (id)outlineView:(CPOutlineView)outlineV objectValueForTableColumn:(CPTableColumn)tableColumn byItem:(id)item {
     return item;   
 }
+*/
 
 /*
 // mouse movement handler
