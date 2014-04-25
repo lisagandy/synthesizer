@@ -47,8 +47,15 @@
 	var allColumn = [[CMColumn alloc] initWithName:@"All"];
 	[allColumn setAllColumn:YES];
 	
+	var columnFoo = [[CMColumn alloc] initWithName:@"foo"];
+	var columnGoo = [[CMColumn alloc] initWithName:@"goo"];
+	var columnRoo = [[CMColumn alloc] initWithName:@"roo"];
+	
+	var derivedA = [[CMColumn alloc] initWithName:@"A"]
+	[derivedA setEquivalentColumns:@[ columnFoo, columnGoo, columnRoo ]];
+	
 	var derivedColumns = @[ allColumn,
-							[[CMColumn alloc] initWithName:@"A"],
+							derivedA,
 							[[CMColumn alloc] initWithName:@"B"],
 							[[CMColumn alloc] initWithName:@"C"],
 							[[CMColumn alloc] initWithName:@"D"],
@@ -63,7 +70,8 @@
 							[[CMColumn alloc] initWithName:@"M"] ];
 	[[CMColumnManager sharedManager] setDerivedColumns:derivedColumns];
 	
-	var sourceColumns = @[ [[CMColumn alloc] initWithName:@"101"],
+	var sourceColumns = @[ columnFoo, columnGoo, columnRoo,
+						   [[CMColumn alloc] initWithName:@"101"],
 						   [[CMColumn alloc] initWithName:@"102"],
 						   [[CMColumn alloc] initWithName:@"103"],
 						   [[CMColumn alloc] initWithName:@"104"],
@@ -92,13 +100,14 @@
 	contentView = [theWindow contentView];
 	var bounds = [contentView bounds];
 
-	sidebarView = [[CMSidebarView alloc] initWithFrame:CGRectMake(bounds.origin.x - 2., bounds.origin.y, 240. + 2., bounds.size.height)];	// 2px to accomodate from the horzontal spacing in the collection view.
-	[sidebarView setAutoresizingMask:CPViewMaxXMargin | CPViewHeightSizable];
-	
 	mainView = [[CMMainView alloc] initWithFrame:CGRectMake(bounds.origin.x + 240., bounds.origin.y, bounds.size.width - 240., bounds.size.height)];
 /* 	[mainView setBackgroundColor:[CPColor blackColor]]; */
 	[mainView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
 
+	sidebarView = [[CMSidebarView alloc] initWithFrame:CGRectMake(bounds.origin.x - 2., bounds.origin.y, 240. + 2., bounds.size.height)];	// 2px to accomodate from the horzontal spacing in the collection view.
+	[sidebarView setAutoresizingMask:CPViewMaxXMargin | CPViewHeightSizable];
+	[sidebarView setMainView:mainView];
+	
 	[contentView addSubview:mainView];
 	[contentView addSubview:sidebarView];
 
