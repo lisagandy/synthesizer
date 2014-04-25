@@ -12,6 +12,8 @@
 @import "Base/CMCommon.j"
 @import "Views/CMMainView.j"
 @import "Views/CMSidebarView.j"
+@import "Model/CMColumn.j"
+@import "Model/CMColumnManager.j"
 
 @implementation AppController : CPObject
 {
@@ -22,11 +24,11 @@
 	CMSidebarView sidebarView;
 }
 
-- (void)applicationDidFinishLaunching:(CPNotification)aNotification
-{
+- (void)applicationDidFinishLaunching:(CPNotification)aNotification {
 	[[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(urlLoaded:) name:CMURLLoadedNotification object:nil];
 	
 	[self parseArguments];
+	[self setupColumnManager];
 	[self setupViews];
 	
 	// Uncomment the following line to turn on the standard menu bar.
@@ -41,6 +43,50 @@
 	}
 }
 
+- (void)setupColumnManager {
+	var allColumn = [[CMColumn alloc] initWithName:@"All"];
+	[allColumn setAllColumn:YES];
+	
+	var derivedColumns = @[ allColumn,
+							[[CMColumn alloc] initWithName:@"A"],
+							[[CMColumn alloc] initWithName:@"B"],
+							[[CMColumn alloc] initWithName:@"C"],
+							[[CMColumn alloc] initWithName:@"D"],
+							[[CMColumn alloc] initWithName:@"E"],
+							[[CMColumn alloc] initWithName:@"F"],
+							[[CMColumn alloc] initWithName:@"G"],
+							[[CMColumn alloc] initWithName:@"H"],
+							[[CMColumn alloc] initWithName:@"I"],
+							[[CMColumn alloc] initWithName:@"J"],
+							[[CMColumn alloc] initWithName:@"K"],
+							[[CMColumn alloc] initWithName:@"L"],
+							[[CMColumn alloc] initWithName:@"M"] ];
+	[[CMColumnManager sharedManager] setDerivedColumns:derivedColumns];
+	
+	var sourceColumns = @[ [[CMColumn alloc] initWithName:@"101"],
+						   [[CMColumn alloc] initWithName:@"102"],
+						   [[CMColumn alloc] initWithName:@"103"],
+						   [[CMColumn alloc] initWithName:@"104"],
+						   [[CMColumn alloc] initWithName:@"105"],
+						   [[CMColumn alloc] initWithName:@"106"],
+						   [[CMColumn alloc] initWithName:@"107"],
+						   [[CMColumn alloc] initWithName:@"108"],
+						   [[CMColumn alloc] initWithName:@"109"],
+						   [[CMColumn alloc] initWithName:@"110"],
+						   [[CMColumn alloc] initWithName:@"111"],
+						   [[CMColumn alloc] initWithName:@"112"],
+						   [[CMColumn alloc] initWithName:@"113"],
+						   [[CMColumn alloc] initWithName:@"114"],
+						   [[CMColumn alloc] initWithName:@"115"],
+						   [[CMColumn alloc] initWithName:@"116"],
+						   [[CMColumn alloc] initWithName:@"117"],
+						   [[CMColumn alloc] initWithName:@"118"],
+						   [[CMColumn alloc] initWithName:@"119"],
+						   [[CMColumn alloc] initWithName:@"120"],
+						   [[CMColumn alloc] initWithName:@"121"] ];
+	[[CMColumnManager sharedManager] setSourceColumns:sourceColumns];
+}
+
 - (void)setupViews {
 	var theWindow = [[CPWindow alloc] initWithContentRect:CGRectMakeZero() styleMask:CPBorderlessBridgeWindowMask],
 	contentView = [theWindow contentView];
@@ -50,7 +96,7 @@
 	[sidebarView setAutoresizingMask:CPViewMaxXMargin | CPViewHeightSizable];
 	
 	mainView = [[CMMainView alloc] initWithFrame:CGRectMake(bounds.origin.x + 240., bounds.origin.y, bounds.size.width - 240., bounds.size.height)];
-	[mainView setBackgroundColor:[CPColor blackColor]];
+/* 	[mainView setBackgroundColor:[CPColor blackColor]]; */
 	[mainView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
 
 	[contentView addSubview:mainView];

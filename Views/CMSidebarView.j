@@ -9,6 +9,7 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 @import "CMSidebarItemView.j"
+@import "../Model/CMColumnManager.j"
 
 @implementation CMSidebarView : CPView
 {
@@ -33,10 +34,13 @@
 		[collectionView setMinItemSize:CGSizeMake([self bounds].size.width, 34)];
 		[collectionView setMaxItemSize:CGSizeMake([self bounds].size.width, 34)];
 		[collectionView setMaxNumberOfColumns:1];
+		[collectionView setAllowsEmptySelection:NO];
+		[collectionView setAllowsMultipleSelection:NO];
 		[collectionView setVerticalMargin:1.];
 		[collectionView setBackgroundColor:[CPColor colorWithHexString:@"dce0e2"]];  // between this and the 1px vertical margin, we get line separators.
 		[collectionView setDelegate:self];
-		
+		[collectionView addObserver:self forKeyPath:@"selectionIndexes" options:(CPKeyValueObservingOptionNew) context:NULL];
+
 		var itemPrototype = [[CPCollectionViewItem alloc] init];
 		[itemPrototype setView:[[CMSidebarItemView alloc] initWithFrame:CGRectMakeZero()]];
 		[collectionView setItemPrototype:itemPrototype];
@@ -44,7 +48,7 @@
 		[scrollView setDocumentView:collectionView];
 		[self addSubview:scrollView];
 		
-		items = [ @"a", @"b", @"c", @"d", @"e", @"f", @"g", @"h", @"i", @"j", @"k", @"l", @"m", @"n", @"o", @"p", @"q", @"r", @"s", @"t", @"u", @"v", @"w", @"x", @"y", @"z" ];
+		items = [[CMColumnManager sharedManager] derivedColumns];
 		[collectionView setContent:items];
 	}
 	return self;
@@ -68,6 +72,20 @@
 	return ["CMSidebarItemType"];
 }
 
+- (void)observeValueForKeyPath:(CPString)keyPath ofObject:(id)object change:(CPDictionary)change context:(void)context {
+	if (object == collectionView) {
+		if ([keyPath isEqualToString:@"selectionIndexes"]) {
+			var collectionViewItems = [collectionView items];
+			var selectedIndex = [[collectionView selectionIndexes] firstIndex];
+			
+			for (var i = 0; i < [collectionViewItems count]; i++) {
+				var v = [[collectionViewItems objectAtIndex:i] view];
+				[v setSelected:(i == selectedIndex)];
+				[v setNeedsDisplay:YES];
+			}
+		}
+	}
+}
 
 /*
 - (id)outlineView:(CPOutlineView)outlineV child:(int)index ofItem:(id)item {

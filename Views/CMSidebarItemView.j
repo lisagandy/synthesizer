@@ -17,11 +17,15 @@
 	
 */
 	CPTextField label;
+	
+	BOOL selected @accessors;
+	CPGradient selectedGradient;
 }
 
 - (id)initWithFrame:(CGRect)aFrame {
 	self = [super initWithFrame:aFrame];
 	if (self) {
+		selectedGradient = [[CPGradient alloc] initWithStartingColor:[CPColor colorWithRed:0.391 green:0.656 blue:0.891 alpha:1.000] endingColor:[CPColor colorWithRed:0.190 green:0.436 blue:0.778 alpha:1.000]];
 	} 
 	return self;
 }
@@ -29,28 +33,38 @@
 - (id)initWithCoder:(CPCoder)aCoder {
 	self = [super initWithCoder:aCoder];
 	if (self) {
+		selectedGradient = [[CPGradient alloc] initWithStartingColor:[CPColor colorWithRed:0.391 green:0.656 blue:0.891 alpha:1.000] endingColor:[CPColor colorWithRed:0.190 green:0.436 blue:0.778 alpha:1.000]];
 		label = [aCoder decodeObjectForKey:@"TextField"];
 	}
 	return self;
 }
+
 - (void)encodeWithCoder:(CPCoder)aCoder {
 	[super encodeWithCoder:aCoder];
 	[aCoder encodeConditionalObject:label forKey:@"TextField"];
 }
 
 - (void)setSelected:(BOOL)isSelected {
-	[self setBackgroundColor:isSelected ? [CPColor blueColor] : nil];
+	selected = isSelected;
+	[label setTextColor:(isSelected ? [CPColor whiteColor] : [CPColor blackColor])];
 }
 
 - (void)drawRect:(CGRect)rect {
 	var bounds = [self bounds]; 
 	var context = [[CPGraphicsContext currentContext] graphicsPort]; 
 
-	CGContextSetFillColor(context, [CPColor whiteColor]); 
-	CGContextFillRect(context, bounds); 
+	if (selected) {
+		[selectedGradient drawInRect:bounds angle:90];
+	}
+	else {
+		CGContextSetFillColor(context, [CPColor whiteColor]); 
+		CGContextFillRect(context, bounds); 
+	}
 }
 
 - (void)setRepresentedObject:(id)anObject {
+	// anObject is of type CMColumn.
+	
 	if (!label) {
 		label = [[CPTextField alloc] initWithFrame:CGRectInset([self bounds], 10.0, 0)];
 		[label setFont:[CPFont boldSystemFontOfSize:14.0]];
@@ -59,7 +73,8 @@
 		[self addSubview:label];
 	}
 
-	[label setStringValue:anObject];
+	console.log("Object: " + anObject + "    Name: " + [anObject name]);
+	[label setStringValue:[anObject name]];
 
 /*
 	if (!_imageView) {
