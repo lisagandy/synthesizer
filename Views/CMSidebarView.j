@@ -10,6 +10,7 @@
 @import <AppKit/AppKit.j>
 @import "CMSidebarItemView.j"
 @import "../Model/CMColumnManager.j"
+@import "CMMainView.j"
 
 @implementation CMSidebarView : CPView
 {
@@ -19,7 +20,7 @@
 	CPScrollView scrollView;
 	CPCollectionView collectionView;
 	
-	CPArray items;
+	CPMainView mainView @accessors;
 }
 
 - (id)initWithFrame:(CGRect)aFrame {
@@ -48,8 +49,7 @@
 		[scrollView setDocumentView:collectionView];
 		[self addSubview:scrollView];
 		
-		items = [[CMColumnManager sharedManager] derivedColumns];
-		[collectionView setContent:items];
+		[collectionView setContent:[[CMColumnManager sharedManager] derivedColumns]];
 	}
 	return self;
 }
@@ -65,6 +65,7 @@
 */
 
 - (CPData)collectionView:(CPCollectionView)aCollectionView dataForItemsAtIndexes:(CPIndexSet)indices forType:(CPString)aType {
+	var items = [[CMColumnManager sharedManager] derivedColumns];
 	return [CPKeyedArchiver archivedDataWithRootObject:[items objectAtIndex:[indices firstIndex]]];
 }
 
@@ -75,13 +76,11 @@
 - (void)observeValueForKeyPath:(CPString)keyPath ofObject:(id)object change:(CPDictionary)change context:(void)context {
 	if (object == collectionView) {
 		if ([keyPath isEqualToString:@"selectionIndexes"]) {
-			var collectionViewItems = [collectionView items];
+			var items = [[CMColumnManager sharedManager] derivedColumns];
 			var selectedIndex = [[collectionView selectionIndexes] firstIndex];
 			
-			for (var i = 0; i < [collectionViewItems count]; i++) {
-				var v = [[collectionViewItems objectAtIndex:i] view];
-				[v setSelected:(i == selectedIndex)];
-				[v setNeedsDisplay:YES];
+			if (selectedIndex < [items count]) {
+				[mainView setSelectedColumn:[items objectAtIndex:selectedIndex]];
 			}
 		}
 	}
