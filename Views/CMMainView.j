@@ -13,16 +13,17 @@
 
 @implementation CMMainView : CPView
 {
+/*
 	CGPoint originalClickInWindow;
 	CGRect originalFrame;
 
+*/
 	CPScrollView scrollView;
 	CPCollectionView collectionView;
-
-	CPTextField label;
 	
-	CPArray items;
 	CGSize minItemSize;
+	
+	CMColumn selectedColumn;
 }
 
 - (id)initWithFrame:(CGRect)aFrame {
@@ -38,7 +39,7 @@
 		
 		collectionView = [[CPCollectionView alloc] initWithFrame:[[scrollView contentView] bounds]];
 		[collectionView setMinItemSize:CGSizeMake(150, 44)];
-/* 		[collectionView setMaxItemSize:CGSizeMake(150, 44)]; */
+ 		[collectionView setMaxItemSize:CGSizeMake(150, 44)];
 		[collectionView setMaxNumberOfColumns:5];
 		[collectionView setMaxNumberOfRows:10];
 		[collectionView setAllowsEmptySelection:NO];
@@ -55,8 +56,8 @@
 		[scrollView setDocumentView:collectionView];
 		[self addSubview:scrollView];
 		
-		items = [[CMColumnManager sharedManager] sourceColumns];
-		[collectionView setContent:items];
+		selectedColumn = nil;
+		[collectionView setContent:[[CMColumnManager sharedManager] equivalentsForColumn:selectedColumn]];
 	} 
 	return self;
 }
@@ -72,7 +73,11 @@
 	
 	// Calculate the max number of items we can fit on screen using minItemSize.
 	var numRows = [[CPNumber numberWithInteger:bounds.size.height / minItemSize] integerValue];
-	
+}
+
+- (void)setSelectedColumn:(CMColumn)aColumn {
+	selectedColumn = aColumn;
+	[collectionView setContent:[[CMColumnManager sharedManager] equivalentsForColumn:selectedColumn]];
 }
 
 /*
@@ -86,6 +91,7 @@
 */
 
 - (CPData)collectionView:(CPCollectionView)aCollectionView dataForItemsAtIndexes:(CPIndexSet)indices forType:(CPString)aType {
+	var items = [[CMColumnManager sharedManager] equivalentsForColumn:selectedColumn];
 	return [CPKeyedArchiver archivedDataWithRootObject:[items objectAtIndex:[indices firstIndex]]];
 }
 
@@ -98,12 +104,6 @@
 		if ([keyPath isEqualToString:@"selectionIndexes"]) {
 			var collectionViewItems = [collectionView items];
 			var selectedIndex = [[collectionView selectionIndexes] firstIndex];
-			
-			for (var i = 0; i < [collectionViewItems count]; i++) {
-				var v = [[collectionViewItems objectAtIndex:i] view];
-				[v setSelected:(i == selectedIndex)];
-				[v setNeedsDisplay:YES];
-			}
 		}
 	}
 }
