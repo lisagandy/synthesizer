@@ -47,6 +47,7 @@
 - (void)setSelected:(BOOL)isSelected {
 	selected = isSelected;
 	[label setTextColor:(isSelected ? [CPColor whiteColor] : [CPColor blackColor])];
+	[self setNeedsDisplay:YES];
 }
 
 - (void)drawRect:(CGRect)rect {
@@ -73,7 +74,6 @@
 		[self addSubview:label];
 	}
 
-	console.log("Object: " + anObject + "    Name: " + [anObject name]);
 	[label setStringValue:[anObject name]];
 
 /*
