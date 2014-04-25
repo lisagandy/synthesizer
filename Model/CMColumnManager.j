@@ -25,4 +25,11 @@ var CMColumnManager_sharedManager = nil;
 	return CMColumnManager_sharedManager;
 }
 
+- (CPArray)equivalentsForColumn:(CMColumn)column {
+	if (column == nil) return sourceColumns;
+	if ([column allColumn]) return sourceColumns;
+
+	return [column equivalentColumns];
+}
+
 @end
