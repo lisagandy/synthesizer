@@ -22,6 +22,7 @@
 	if (self) {
 		backgroundGradient = [[CPGradient alloc] initWithStartingColor:[CPColor colorWithRed:1 green:1 blue:1 alpha:1] endingColor:[CPColor colorWithRed:0.831 green:0.827 blue:0.827 alpha:1]];
 		searchField = [[ToolbarSearchField alloc] initWithFrame:CGRectMake(aFrame.origin.x + aFrame.size.width - 10 - 140, aFrame.origin.y + 5, 140, 30)];
+		[searchField setAutoresizingMask:CPViewMinXMargin];
 		[searchField setTarget:self];
 		[searchField setAction:@selector(filterColumns:)];
 		[searchField setSendsSearchStringImmediately:YES];
