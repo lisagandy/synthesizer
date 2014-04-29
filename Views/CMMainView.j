@@ -39,13 +39,13 @@
 		
 		collectionView = [[CPCollectionView alloc] initWithFrame:[[scrollView contentView] bounds]];
 		[collectionView setMinItemSize:CGSizeMake(150, 44)];
- 		[collectionView setMaxItemSize:CGSizeMake(150, 44)];
-		[collectionView setMaxNumberOfColumns:5000];
-		[collectionView setMaxNumberOfRows:10];
+ 		[collectionView setMaxItemSize:CGSizeMake(5000, 44)];
+		[collectionView setMaxNumberOfColumns:1];
+		[collectionView setMaxNumberOfRows:5000];
 		[collectionView setAllowsEmptySelection:NO];
 		[collectionView setAllowsMultipleSelection:NO];
 		[collectionView setVerticalMargin:1.];
-		[collectionView setBackgroundColor:[CPColor darkGrayColor]];  // between this and the 1px vertical margin, we get line separators.
+		[collectionView setBackgroundColor:[CPColor colorWithHexString:@"dce0e2"]];  // between this and the 1px vertical margin, we get line separators.
 		[collectionView setDelegate:self];
 		[collectionView addObserver:self forKeyPath:@"selectionIndexes" options:(CPKeyValueObservingOptionNew) context:NULL];
 		
