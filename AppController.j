@@ -20,6 +20,7 @@
 	CPTextField label;
 	CPArray csvFileURLs;
 	
+	CPWindow window;
 	CMMainView mainView;
 	CMSidebarView sidebarView;
 }
@@ -96,12 +97,12 @@
 }
 
 - (void)setupViews {
-	var theWindow = [[CPWindow alloc] initWithContentRect:CGRectMakeZero() styleMask:CPBorderlessBridgeWindowMask],
-	contentView = [theWindow contentView];
+	window = [[CPWindow alloc] initWithContentRect:CGRectMakeZero() styleMask:CPBorderlessBridgeWindowMask];
+	[window setBackgroundColor:[CPColor yellowColor]];
+	var contentView = [window contentView];
 	var bounds = [contentView bounds];
 
 	mainView = [[CMMainView alloc] initWithFrame:CGRectMake(bounds.origin.x + 240., bounds.origin.y, bounds.size.width - 240., bounds.size.height)];
-/* 	[mainView setBackgroundColor:[CPColor blackColor]]; */
 	[mainView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
 
 	sidebarView = [[CMSidebarView alloc] initWithFrame:CGRectMake(bounds.origin.x - 2., bounds.origin.y, 240. + 2., bounds.size.height)];	// 2px to accomodate from the horzontal spacing in the collection view.
@@ -111,7 +112,7 @@
 	[contentView addSubview:mainView];
 	[contentView addSubview:sidebarView];
 
-	[theWindow orderFront:self];
+	[window orderFront:self];
 }
 
 - (void)urlLoaded:(CPNotification)notify {
