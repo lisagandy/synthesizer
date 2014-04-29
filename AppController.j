@@ -12,6 +12,7 @@
 @import "Base/CMCommon.j"
 @import "Views/CMMainView.j"
 @import "Views/CMSidebarView.j"
+@import "Views/CMHeaderView.j"
 @import "Model/CMColumn.j"
 @import "Model/CMColumnManager.j"
 
@@ -21,6 +22,7 @@
 	CPArray csvFileURLs;
 	
 	CPWindow window;
+	CMHeaderView headerView;
 	CMMainView mainView;
 	CMSidebarView sidebarView;
 }
@@ -102,13 +104,18 @@
 	var contentView = [window contentView];
 	var bounds = [contentView bounds];
 
-	mainView = [[CMMainView alloc] initWithFrame:CGRectMake(bounds.origin.x + 240., bounds.origin.y, bounds.size.width - 240., bounds.size.height)];
+	var headerViewHeight = 40;
+	headerView = [[CMHeaderView alloc] initWithFrame:CGRectMake(bounds.origin.x, bounds.origin.y, bounds.size.width, headerViewHeight)];
+	[headerView setAutoresizingMask:CPViewHeightSizable | CPViewMaxYMargin];
+
+	mainView = [[CMMainView alloc] initWithFrame:CGRectMake(bounds.origin.x + 240., bounds.origin.y + headerViewHeight, bounds.size.width - 240., bounds.size.height - headerViewHeight)];
 	[mainView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
 
-	sidebarView = [[CMSidebarView alloc] initWithFrame:CGRectMake(bounds.origin.x - 2., bounds.origin.y, 240. + 2., bounds.size.height)];	// 2px to accomodate from the horzontal spacing in the collection view.
+	sidebarView = [[CMSidebarView alloc] initWithFrame:CGRectMake(bounds.origin.x - 2., bounds.origin.y + headerViewHeight, 240. + 2., bounds.size.height - headerViewHeight)];	// 2px to accomodate from the horzontal spacing in the collection view.
 	[sidebarView setAutoresizingMask:CPViewMaxXMargin | CPViewHeightSizable];
 	[sidebarView setMainView:mainView];
 	
+	[contentView addSubview:headerView];
 	[contentView addSubview:mainView];
 	[contentView addSubview:sidebarView];
 
