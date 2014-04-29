@@ -27,7 +27,11 @@
 - (id)initWithFrame:(CGRect)aFrame {
 	self = [super initWithFrame:aFrame];
 	if (self) {
-		selectedGradient = [[CPGradient alloc] initWithStartingColor:[CPColor colorWithRed:0.391 green:0.656 blue:0.891 alpha:1.000] endingColor:[CPColor colorWithRed:0.190 green:0.436 blue:0.778 alpha:1.000]];
+		// Blue
+		//selectedGradient = [[CPGradient alloc] initWithStartingColor:[CPColor colorWithRed:0.391 green:0.656 blue:0.891 alpha:1.000] endingColor:[CPColor colorWithRed:0.190 green:0.436 blue:0.778 alpha:1.000]];
+		// Gray
+		selectedGradient = [[CPGradient alloc] initWithStartingColor:[CPColor colorWithRed:0.618 green:0.618 blue:0.618 alpha:1] endingColor:[CPColor colorWithRed:0.425 green:0.425 blue:0.425 alpha:1]];
+		
 	} 
 	return self;
 }
@@ -35,7 +39,10 @@
 - (id)initWithCoder:(CPCoder)aCoder {
 	self = [super initWithCoder:aCoder];
 	if (self) {
-		selectedGradient = [[CPGradient alloc] initWithStartingColor:[CPColor colorWithRed:0.391 green:0.656 blue:0.891 alpha:1.000] endingColor:[CPColor colorWithRed:0.190 green:0.436 blue:0.778 alpha:1.000]];
+		// Blue
+		//selectedGradient = [[CPGradient alloc] initWithStartingColor:[CPColor colorWithRed:0.391 green:0.656 blue:0.891 alpha:1.000] endingColor:[CPColor colorWithRed:0.190 green:0.436 blue:0.778 alpha:1.000]];
+		// Gray
+		selectedGradient = [[CPGradient alloc] initWithStartingColor:[CPColor colorWithWhite:0.5 alpha:1] endingColor:[CPColor colorWithWhite:0.3 alpha:1]];
 		label = [aCoder decodeObjectForKey:@"Label"];
 		countLabel = [aCoder decodeObjectForKey:@"CountLabel"];
 	}
