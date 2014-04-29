@@ -40,12 +40,12 @@
 		collectionView = [[CPCollectionView alloc] initWithFrame:[[scrollView contentView] bounds]];
 		[collectionView setMinItemSize:CGSizeMake(150, 44)];
  		[collectionView setMaxItemSize:CGSizeMake(150, 44)];
-		[collectionView setMaxNumberOfColumns:5];
+		[collectionView setMaxNumberOfColumns:5000];
 		[collectionView setMaxNumberOfRows:10];
 		[collectionView setAllowsEmptySelection:NO];
 		[collectionView setAllowsMultipleSelection:NO];
 		[collectionView setVerticalMargin:1.];
-		[collectionView setBackgroundColor:[CPColor colorWithHexString:@"dce0e2"]];  // between this and the 1px vertical margin, we get line separators.
+		[collectionView setBackgroundColor:[CPColor darkGrayColor]];  // between this and the 1px vertical margin, we get line separators.
 		[collectionView setDelegate:self];
 		[collectionView addObserver:self forKeyPath:@"selectionIndexes" options:(CPKeyValueObservingOptionNew) context:NULL];
 		
@@ -72,7 +72,8 @@
 	var bounds = [self bounds];
 	
 	// Calculate the max number of items we can fit on screen using minItemSize.
-	var numRows = [[CPNumber numberWithInteger:bounds.size.height / minItemSize] integerValue];
+	var numRows = FLOOR(bounds.size.height / minItemSize);
+	[collectionView setMaxNumberOfRows:numRows];
 }
 
 - (void)setSelectedColumn:(CMColumn)aColumn {
