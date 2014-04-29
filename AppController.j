@@ -100,24 +100,27 @@
 
 - (void)setupViews {
 	window = [[CPWindow alloc] initWithContentRect:CGRectMakeZero() styleMask:CPBorderlessBridgeWindowMask];
-	[window setBackgroundColor:[CPColor yellowColor]];
 	var contentView = [window contentView];
 	var bounds = [contentView bounds];
 
 	var headerViewHeight = 40;
 	headerView = [[CMHeaderView alloc] initWithFrame:CGRectMake(bounds.origin.x, bounds.origin.y, bounds.size.width, headerViewHeight)];
-	[headerView setAutoresizingMask:CPViewHeightSizable | CPViewMaxYMargin];
+	[headerView setAutoresizingMask:CPViewWidthSizable | CPViewMaxYMargin];
 
-	mainView = [[CMMainView alloc] initWithFrame:CGRectMake(bounds.origin.x + 240., bounds.origin.y + headerViewHeight, bounds.size.width - 240., bounds.size.height - headerViewHeight)];
+	mainView = [[CMMainView alloc] initWithFrame:CGRectMake(bounds.origin.x + 240., bounds.origin.y + headerViewHeight - 1, bounds.size.width - 240., bounds.size.height - headerViewHeight)];
 	[mainView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
 
-	sidebarView = [[CMSidebarView alloc] initWithFrame:CGRectMake(bounds.origin.x - 2., bounds.origin.y + headerViewHeight, 240. + 2., bounds.size.height - headerViewHeight)];	// 2px to accomodate from the horzontal spacing in the collection view.
+	sidebarView = [[CMSidebarView alloc] initWithFrame:CGRectMake(bounds.origin.x - 2., bounds.origin.y + headerViewHeight - 1, 240. + 2., bounds.size.height - headerViewHeight)];	// 2px to accomodate from the horzontal spacing in the collection view.
 	[sidebarView setAutoresizingMask:CPViewMaxXMargin | CPViewHeightSizable];
 	[sidebarView setMainView:mainView];
 	
-	[contentView addSubview:headerView];
+	var splitView = [[CPView alloc] initWithFrame:CGRectMake(bounds.origin.x + 240., bounds.origin.y + headerViewHeight, 2., bounds.size.height - headerViewHeight)];
+	[splitView setBackgroundColor:[CPColor darkGrayColor]];
+	
 	[contentView addSubview:mainView];
 	[contentView addSubview:sidebarView];
+	[contentView addSubview:headerView];
+	[contentView addSubview:splitView];
 
 	[window orderFront:self];
 }
