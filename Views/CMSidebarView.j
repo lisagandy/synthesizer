@@ -50,6 +50,7 @@
 		[self addSubview:scrollView];
 		
 		[collectionView setContent:[[CMColumnManager sharedManager] derivedColumns]];
+		[collectionView setSelectionIndexes:[CPIndexSet indexSetWithIndex:0]];
 	}
 	return self;
 }
