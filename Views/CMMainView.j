@@ -8,8 +8,9 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
-@import "CMSidebarItemView.j"
+@import "CMMainItemView.j"
 @import "../Model/CMColumnManager.j"
+@import "../Base/CMScroller.j"
 
 @implementation CMMainView : CPView
 {
@@ -33,9 +34,12 @@
 	
 		scrollView = [[CPScrollView alloc] initWithFrame:[self bounds]];
 		[scrollView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
-		[scrollView setAutohidesScrollers:NO];
-		[scrollView setHasHorizontalScroller:YES];
-		[scrollView setHasVerticalScroller:NO];
+		[scrollView setHasHorizontalScroller:NO];
+		[scrollView setHasVerticalScroller:YES];
+/* 		[scrollView setAutohidesScrollers:NO]; */
+/* 		[scrollView setVerticalScroller:[[CMScroller alloc] initWithFrame:CGRectMake(0, 0, 0, 0)]]; */
+/* 		[[scrollView verticalScroller] setAllowFadingOut:NO]; */
+/* 		[scrollView setScrollerStyle:CPScrollerStyleLegacy]; */
 		
 		collectionView = [[CPCollectionView alloc] initWithFrame:[[scrollView contentView] bounds]];
 		[collectionView setMinItemSize:CGSizeMake(150, 44)];
@@ -50,7 +54,7 @@
 		[collectionView addObserver:self forKeyPath:@"selectionIndexes" options:(CPKeyValueObservingOptionNew) context:NULL];
 		
 		var itemPrototype = [[CPCollectionViewItem alloc] init];
-		[itemPrototype setView:[[CMSidebarItemView alloc] initWithFrame:CGRectMakeZero()]];
+		[itemPrototype setView:[[CMMainItemView alloc] initWithFrame:CGRectMakeZero()]];
 		[collectionView setItemPrototype:itemPrototype];
 
 		[scrollView setDocumentView:collectionView];
