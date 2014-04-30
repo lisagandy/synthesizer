@@ -26,10 +26,17 @@ var CMColumnManager_sharedManager = nil;
 }
 
 - (CPArray)equivalentsForColumn:(CMColumn)column {
-	if (column == nil) return sourceColumns;
-	if ([column allColumn]) return sourceColumns;
+	// Our default return is all sourceColumns.  
+	var retArray = sourceColumns;
+	if (retArray == nil) retArray = [CPArray array];		// Make sure we don't return nil.
 
-	return [column equivalentColumns];
+	// If column is defined and is not the "All" column name, then return its equivalent columns.
+	if (column && ![column allColumn]) {
+		// Again, make sure we return an empty array instead of nil.
+		retArray = [column equivalentColumns] ? [column equivalentColumns] : [CPArray array];
+	}
+	
+	return retArray;
 }
 
 @end
