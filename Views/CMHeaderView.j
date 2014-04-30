@@ -14,13 +14,28 @@
 	CPMainView mainView @accessors;
 	
 	CPGradient backgroundGradient;
+	CPTextField title;
 	CPSearchField searchField;
 }
 
 - (id)initWithFrame:(CGRect)aFrame {
 	self = [super initWithFrame:aFrame];
 	if (self) {
-		backgroundGradient = [[CPGradient alloc] initWithStartingColor:[CPColor colorWithRed:1 green:1 blue:1 alpha:1] endingColor:[CPColor colorWithRed:0.831 green:0.827 blue:0.827 alpha:1]];
+//		backgroundGradient = [[CPGradient alloc] initWithStartingColor:[CPColor colorWithRed:1 green:1 blue:1 alpha:1] endingColor:[CPColor colorWithRed:0.831 green:0.827 blue:0.827 alpha:1]];
+		backgroundGradient = [[CPGradient alloc] initWithStartingColor:[CPColor colorWithHue:0.597 saturation:0.666 brightness:0.83 alpha:1] endingColor:[CPColor colorWithHue:0.597 saturation:0.666 brightness:0.65 alpha:1]];
+		
+		title = [[CPTextField alloc] initWithFrame:CGRectInset(aFrame, 10, 0)];
+		[title setFont:[CPFont boldSystemFontOfSize:20.0]];
+		[title setAutoresizingMask:CPViewHeightSizable | CPViewMaxXMargin];
+		[title setAlignment:CPCenterTextAlignment];
+		[title setVerticalAlignment:CPCenterVerticalTextAlignment];
+		[title setTextColor:[CPColor whiteColor]];
+		[title setTextShadowColor:[CPColor lightGrayColor]];
+		[title setTextShadowOffset:CGSizeMake(0, 1)];
+		[title setStringValue:@"Column Merger"];
+		[self addSubview:title];
+
+		
 		searchField = [[ToolbarSearchField alloc] initWithFrame:CGRectMake(aFrame.origin.x + aFrame.size.width - 10 - 140, aFrame.origin.y + 5, 140, 30)];
 		[searchField setAutoresizingMask:CPViewMinXMargin];
 		[searchField setTarget:self];
