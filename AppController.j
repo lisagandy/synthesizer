@@ -14,7 +14,8 @@
 @import "Views/CMSidebarView.j"
 @import "Views/CMHeaderView.j"
 @import "Model/CMColumn.j"
-@import "Model/CMColumnManager.j"
+@import "Model/CMColumnGroup.j"
+/* @import "Model/CMColumnManager.j" */
 
 @implementation AppController : CPObject
 {
@@ -47,31 +48,34 @@
 }
 
 - (void)setupColumnManager {
-	var allColumn = [[CMColumn alloc] initWithName:@"All"];
-	[allColumn setAllColumn:YES];
-	
+	var allGroup = [[CMColumnGroup alloc] initWithName:@"All"];
+	[allGroup setAllGroup:YES];
+	var soloGroup = [[CMColumnGroup alloc] initWithName:@"Solo"];
+	[soloGroup setSoloGroup:YES];
+
 	var columnFoo = [[CMColumn alloc] initWithName:@"foo"];
 	var columnGoo = [[CMColumn alloc] initWithName:@"goo"];
 	var columnRoo = [[CMColumn alloc] initWithName:@"roo"];
 	
-	var derivedA = [[CMColumn alloc] initWithName:@"A"]
-	[derivedA setEquivalentColumns:@[ columnFoo, columnGoo, columnRoo ]];
+	var derivedA = [[CMColumnGroup alloc] initWithName:@"A"]
+	[derivedA setMembers:@[ columnFoo, columnGoo, columnRoo ]];
 	
-	var derivedColumns = @[ allColumn,
+	var derivedColumns = @[ allGroup,
+							soloGroup,
 							derivedA,
-							[[CMColumn alloc] initWithName:@"B"],
-							[[CMColumn alloc] initWithName:@"C"],
-							[[CMColumn alloc] initWithName:@"D"],
-							[[CMColumn alloc] initWithName:@"E"],
-							[[CMColumn alloc] initWithName:@"F"],
-							[[CMColumn alloc] initWithName:@"G"],
-							[[CMColumn alloc] initWithName:@"H"],
-							[[CMColumn alloc] initWithName:@"I"],
-							[[CMColumn alloc] initWithName:@"J"],
-							[[CMColumn alloc] initWithName:@"K"],
-							[[CMColumn alloc] initWithName:@"L"],
-							[[CMColumn alloc] initWithName:@"M"] ];
-	[[CMColumnManager sharedManager] setDerivedColumns:derivedColumns];
+							[[CMColumnGroup alloc] initWithName:@"B"],
+							[[CMColumnGroup alloc] initWithName:@"C"],
+							[[CMColumnGroup alloc] initWithName:@"D"],
+							[[CMColumnGroup alloc] initWithName:@"E"],
+							[[CMColumnGroup alloc] initWithName:@"F"],
+							[[CMColumnGroup alloc] initWithName:@"G"],
+							[[CMColumnGroup alloc] initWithName:@"H"],
+							[[CMColumnGroup alloc] initWithName:@"I"],
+							[[CMColumnGroup alloc] initWithName:@"J"],
+							[[CMColumnGroup alloc] initWithName:@"K"],
+							[[CMColumnGroup alloc] initWithName:@"L"],
+							[[CMColumnGroup alloc] initWithName:@"M"] ];
+	[[CMColumnManager sharedManager] setColumnGroups:derivedColumns];
 	
 	var sourceColumns = @[ columnFoo, columnGoo, columnRoo,
 						   [[CMColumn alloc] initWithName:@"101"],
@@ -95,7 +99,7 @@
 						   [[CMColumn alloc] initWithName:@"119"],
 						   [[CMColumn alloc] initWithName:@"120"],
 						   [[CMColumn alloc] initWithName:@"121"] ];
-	[[CMColumnManager sharedManager] setSourceColumns:sourceColumns];
+	[[CMColumnManager sharedManager] setColumns:sourceColumns];
 }
 
 - (void)setupViews {

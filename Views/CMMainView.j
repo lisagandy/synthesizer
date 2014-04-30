@@ -24,7 +24,7 @@
 	
 	CGSize minItemSize;
 	
-	CMColumn selectedColumn;
+	CMColumnGroup selectedGroup;
 }
 
 - (id)initWithFrame:(CGRect)aFrame {
@@ -60,8 +60,8 @@
 		[scrollView setDocumentView:collectionView];
 		[self addSubview:scrollView];
 		
-		selectedColumn = nil;
-		[collectionView setContent:[[CMColumnManager sharedManager] equivalentsForColumn:selectedColumn]];
+		selectedGroup = nil;
+		[collectionView setContent:[[CMColumnManager sharedManager] columns]];
 	} 
 	return self;
 }
@@ -80,9 +80,9 @@
 	[collectionView setMaxNumberOfRows:numRows];
 }
 
-- (void)setSelectedColumn:(CMColumn)aColumn {
-	selectedColumn = aColumn;
-	[collectionView setContent:[[CMColumnManager sharedManager] equivalentsForColumn:selectedColumn]];
+- (void)setSelectedGroup:(CMColumnGroup)aGroup {
+	selectedGroup = aGroup;
+	[collectionView setContent:[selectedGroup members]];
 }
 
 /*
@@ -96,7 +96,7 @@
 */
 
 - (CPData)collectionView:(CPCollectionView)aCollectionView dataForItemsAtIndexes:(CPIndexSet)indices forType:(CPString)aType {
-	var items = [[CMColumnManager sharedManager] equivalentsForColumn:selectedColumn];
+	var items = [selectedGroup members];
 	return [CPKeyedArchiver archivedDataWithRootObject:[items objectAtIndex:[indices firstIndex]]];
 }
 
@@ -112,29 +112,5 @@
 		}
 	}
 }
-
-/*
-// mouse movement handler
-- (void)mouseDown:(CPEvent)anEvent {
-        originalClickInWindow = [anEvent locationInWindow];
-        originalFrame = [self frame];
-
-        [self setBackgroundColor:[CPColor orangeColor]];
-}
- 
-// on mouse move, we construct a visual hovering effect.     
-- (void)mouseDragged:(CPEvent)anEvent {
-        var currentLocationInWindow = [anEvent locationInWindow];
-        var offset = CGPointMakeZero();
-        offset.x = originalClickInWindow.x - currentLocationInWindow.x;
-        offset.y = originalClickInWindow.y - currentLocationInWindow.y;
-
-        [self setFrame:CPRectMake(originalFrame.origin.x - offset.x, originalFrame.origin.y - offset.y, originalFrame.size.width, originalFrame.size.height)];
-}
-
-- (void)mouseUp:(CPEvent)anEvent {
-        [self setBackgroundColor:[CPColor yellowColor]];
-}
-*/
 
 @end

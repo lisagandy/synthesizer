@@ -14,11 +14,8 @@
 	// The column name.
 	CPString name @accessors;
 	
-	// An array of CMColumn objects that are equivalent to this column.  
-	CPArray equivalentColumns @accessors;
-	
-	// If YES, this is the "special" derived column that should show all source columns.
-	BOOL allColumn @accessors;
+	// The column source spreadsheet.
+	CPString spreadsheet @accessors;
 }
 
 - (void)initWithName:(CPString)n {

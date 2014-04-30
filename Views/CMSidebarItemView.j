@@ -84,7 +84,7 @@
 }
 
 - (void)setRepresentedObject:(id)anObject {
-	// anObject is of type CMColumn.
+	// anObject is of type CMColumnGroup.
 	
 	if (!label) {
 		label = [[CPTextField alloc] initWithFrame:CGRectInset([self bounds], 10.0, 0)];
@@ -106,8 +106,8 @@
 	}
 
 	[label setStringValue:[anObject name]];
-	var equivalentCount = [[[CMColumnManager sharedManager] equivalentsForColumn:anObject] count];
-	[countLabel setStringValue:equivalentCount > 0 ? [CPString stringWithFormat:@"%d", equivalentCount] : @""];
+	var memberCount = [[anObject members] count];
+	[countLabel setStringValue:(memberCount > 0) ? [CPString stringWithFormat:@"%d", memberCount] : @""];
 
 /*
 	if (!_imageView) {

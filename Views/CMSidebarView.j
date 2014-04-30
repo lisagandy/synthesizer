@@ -49,7 +49,7 @@
 		[scrollView setDocumentView:collectionView];
 		[self addSubview:scrollView];
 		
-		[collectionView setContent:[[CMColumnManager sharedManager] derivedColumns]];
+		[collectionView setContent:[[CMColumnManager sharedManager] columnGroups]];
 		[collectionView setSelectionIndexes:[CPIndexSet indexSetWithIndex:0]];
 	}
 	return self;
@@ -66,7 +66,7 @@
 */
 
 - (CPData)collectionView:(CPCollectionView)aCollectionView dataForItemsAtIndexes:(CPIndexSet)indices forType:(CPString)aType {
-	var items = [[CMColumnManager sharedManager] derivedColumns];
+	var items = [[CMColumnManager sharedManager] columnGroups];
 	return [CPKeyedArchiver archivedDataWithRootObject:[items objectAtIndex:[indices firstIndex]]];
 }
 
@@ -77,14 +77,18 @@
 - (void)observeValueForKeyPath:(CPString)keyPath ofObject:(id)object change:(CPDictionary)change context:(void)context {
 	if (object == collectionView) {
 		if ([keyPath isEqualToString:@"selectionIndexes"]) {
-			var items = [[CMColumnManager sharedManager] derivedColumns];
+			var items = [[CMColumnManager sharedManager] columnGroups];
 			var selectedIndex = [[collectionView selectionIndexes] firstIndex];
 			
 			if (selectedIndex < [items count]) {
-				[mainView setSelectedColumn:[items objectAtIndex:selectedIndex]];
+				[mainView setSelectedGroup:[items objectAtIndex:selectedIndex]];
 			}
 		}
 	}
+}
+
+- (CPArray)columnGroups {
+	
 }
 
 @end
