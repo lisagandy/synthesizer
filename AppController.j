@@ -116,6 +116,7 @@
 	
 	var splitView = [[CPView alloc] initWithFrame:CGRectMake(bounds.origin.x + 240., bounds.origin.y + headerViewHeight, 2., bounds.size.height - headerViewHeight)];
 	[splitView setBackgroundColor:[CPColor darkGrayColor]];
+	[splitView setAutoresizingMask:CPViewMaxXMargin | CPViewHeightSizable];
 	
 	[contentView addSubview:mainView];
 	[contentView addSubview:sidebarView];
