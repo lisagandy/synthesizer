@@ -25,6 +25,15 @@ var CMColumnManager_sharedManager = nil;
 	return CMColumnManager_sharedManager;
 }
 
+- (id)init {
+	self = [super init];
+	if (self) {
+		columns = [CPArray array];
+		columnGroups = [CPArray array];
+	}
+	return self;
+}
+
 - (CPArray)soloColumns {
 	// Return the columns without a group.
 	var retArray = [CPMutableArray array];
