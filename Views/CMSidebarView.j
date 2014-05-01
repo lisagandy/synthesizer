@@ -18,7 +18,7 @@
 	CGRect originalFrame;
 	
 	CPScrollView scrollView;
-	CPCollectionView collectionView;
+	CPCollectionView collectionView @accessors;
 	
 	CPMainView mainView @accessors;
 }
@@ -64,6 +64,17 @@
 	CGContextFillRect(context, CGRectMake(bounds.origin.x + 5, bounds.origin.y + 5, bounds.size.width - 10., bounds.size.height - 10.)); 
 }
 */
+
+- (void)updateCollectionView {
+	[collectionView setContent:[[CMColumnManager sharedManager] columnGroups]];
+	
+	var items = [[CMColumnManager sharedManager] columnGroups];
+	var selectedIndex = [[collectionView selectionIndexes] firstIndex];
+	
+	if (selectedIndex < [items count]) {
+		[mainView setSelectedGroup:[items objectAtIndex:selectedIndex]];
+	}
+}
 
 - (CPData)collectionView:(CPCollectionView)aCollectionView dataForItemsAtIndexes:(CPIndexSet)indices forType:(CPString)aType {
 	var items = [[CMColumnManager sharedManager] columnGroups];

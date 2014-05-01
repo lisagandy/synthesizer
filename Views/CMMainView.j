@@ -82,7 +82,7 @@
 
 - (void)setSelectedGroup:(CMColumnGroup)aGroup {
 	selectedGroup = aGroup;
-	[collectionView setContent:[selectedGroup members]];
+	[collectionView setContent:[selectedGroup members] ? [selectedGroup members] : [CPArray array]];
 }
 
 /*
