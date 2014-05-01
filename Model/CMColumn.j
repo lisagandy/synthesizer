@@ -36,7 +36,7 @@
 		return [[name lowercaseString] compare:[[otherObject name] lowercaseString]];	
 	}
 	else {
-		[super compare:otherObject];
+		return CPOrderedSame;
 	}
 }
 
