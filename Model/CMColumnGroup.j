@@ -33,16 +33,41 @@
 	return self;
 }
 
-- (CPArray)members {
-	if (allGroup) {
-		return [[CMColumnManager sharedManager] columns];
-	}
-	else if (soloGroup) {
-		return [[CMColumnManager sharedManager] soloColumns];
+- (CPString)description {
+	return [CPString stringWithFormat:@"CMColumnGroup {\n    Name: %@\n    Member count: %d\n}", name ? name : @"", members ? [members count] : 0];
+}
+
+- (CPComparisonResult)compare:(id)otherObject {
+	if ([otherObject isKindOfClass:[self class]]) {
+		return [[name lowercaseString] compare:[[otherObject name] lowercaseString]];	
 	}
 	else {
-		if ([members count]) return members;
-		else return [CPArray array];
+		[super compare:otherObject];
+	}
+}
+
+- (CPArray)members {
+	if (allGroup) {
+		var retArray = [[CMColumnManager sharedManager] columns];
+		return retArray ? retArray : [CPArray array];
+	}
+	else if (soloGroup) {
+		var retArray = [[CMColumnManager sharedManager] soloColumns];
+		return retArray ? retArray : [CPArray array];
+	}
+	else {
+		return [members count] ? members : [CPArray array];
+	}
+}
+
+- (void)addMember:(CMColumn)column {
+	if (!column) return;
+
+	if (members) {
+		members = [members arrayByAddingObject:column];
+	}
+	else {
+		members = @[ column ];
 	}
 }
 
