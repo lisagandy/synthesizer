@@ -17,7 +17,7 @@
 @implementation CMCSV : CPObject
 {
 	// An array of arrays.  The second level arrays are columns for each line.
-	CPArray lines;
+	CPArray lines @accessors;
 }
 
 - (id)initWithCSVText:(CPString)csv {
@@ -41,7 +41,19 @@
 	
 	var parsedLines = [CPMutableArray array];
 
-	var /* CPArray */ csvLines = [csv componentsSeparatedByString:@"\n"];
+	// Figure out what our line delimiter should be.  Excel exports seem to have a "\r" delimiter, but we also want to support \n and \n\r.
+	var lineDelimiter = @"\n\r";
+	if ([csv rangeOfString:lineDelimiter].location == CPNotFound) {
+		// Check if we should just us \n or \r.
+		if ([csv rangeOfString:@"\n"].location != CPNotFound) {
+			lineDelimiter = @"\n";
+		}
+		else if ([csv rangeOfString:@"\r"].location != CPNotFound) {
+			lineDelimiter = @"\r";
+		}
+	}
+
+	var /* CPArray */ csvLines = [csv componentsSeparatedByString:lineDelimiter];
 	
 	for (var lineNumber = 0; lineNumber < [csvLines count]; lineNumber++) {
 		// Iterate through the CSV lines.
