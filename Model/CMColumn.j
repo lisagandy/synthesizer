@@ -18,12 +18,26 @@
 	CPString spreadsheet @accessors;
 }
 
-- (void)initWithName:(CPString)n {
+- (void)initWithName:(CPString)n spreadsheet:(CPString)s {
 	self = [super init];
 	if (self) {
 		name = n;
+		spreadsheet = s;
 	}
 	return self;
+}
+
+- (CPString)description {
+	return [CPString stringWithFormat:@"CMColumn {\n    Name: %@\n    Spreadsheet: %@\n}", name ? name : @"", spreadsheet ? spreadsheet : @""];
+}
+
+- (CPComparisonResult)compare:(id)otherObject {
+	if ([otherObject isKindOfClass:[self class]]) {
+		return [[name lowercaseString] compare:[[otherObject name] lowercaseString]];	
+	}
+	else {
+		[super compare:otherObject];
+	}
 }
 
 @end
