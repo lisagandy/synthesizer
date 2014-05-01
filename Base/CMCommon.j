@@ -8,3 +8,8 @@
 
 // Notifications
 CMURLLoadedNotification = "CMURLLoadedNotification";
+
+// Column Names
+CMOldIDColumnName = "Old ID/Grouping";
+CMNewIDColumnName = "New ID";
+CMSpreadsheetColumnName = "Spreadsheet";
