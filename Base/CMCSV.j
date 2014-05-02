@@ -29,6 +29,15 @@
 }
 
 - (void)parse:(CPString)csv {
+	// We bypass some of the strict Objective-J calls in this code to make parsing faster.  CPString objects are toll-free bridged with Javascript String objects.
+	// In this case, it's faster to do the parsing using the Javascript Strings instead of using the extra CPString layer.  You'll see below that csvLine is casted to String.
+	//   [CPString characterAtIndex:index]            ->  String.charAt(index)
+	//   [CPString isEqualToString:CPString]          ->  String == String
+	//   [CPString length]                            ->  String.length
+	//   [CPString stringByAppendingString:CPString]  ->  String = String + String
+	//
+	// These relatively simple changes result in a parser that runs 8-10 times faster than the original.
+
 	// The cell value...
 	// "foo", "goo", "" ,,
 	// becomes...
@@ -58,24 +67,25 @@
 	for (var lineNumber = 0; lineNumber < [csvLines count]; lineNumber++) {
 		// Iterate through the CSV lines.
 		var currentLine = [CPMutableArray array];
-		var currentColumn = @"";
+		var /* Javascript String */ currentColumn = new String;
 
-		var /* CPString */ csvLine = [csvLines objectAtIndex:lineNumber];
+		var /* Javascript String */ csvLine = String([csvLines objectAtIndex:lineNumber]);
+		var csvLineLength = csvLine.length;
 		var inQuote = NO;
 		
 		var characterIndex = 0;
-		while (characterIndex < [csvLine length]) {
+		while (characterIndex < csvLineLength) {
 			// Iterate through the characters on each line.
-			var /* CPString */ thisCharacter = [csvLine characterAtIndex:characterIndex];
+			var /* Javascript String */ thisCharacter = csvLine.charAt(characterIndex);
 			
 			if (inQuote) {
-				if ([thisCharacter isEqualToString:@"\""]) {
+				if (thisCharacter == "\"") {
 					// Check if the following character is a quote.
-					var nextCharacter = (characterIndex < [csvLine length] - 1) ? [csvLine characterAtIndex:characterIndex + 1] : @"";
+					var nextCharacter = (characterIndex < csvLineLength - 1) ? csvLine.charAt(characterIndex + 1) : @"";
 					
-					if ([nextCharacter isEqualToString:@"\""]) {
+					if (nextCharacter == "\"") { //[nextCharacter isEqualToString:@"\""]) {
 						// Two double-quotes (""), replace with a single double-quote (") and continue on in the same column.
-						currentColumn = [currentColumn stringByAppendingString:@"\""];
+						currentColumn = currentColumn + "\"";
 						// Increment the characterIndex an extra stop, to skip the second ".
 						characterIndex++;
 					}
@@ -86,22 +96,22 @@
 				}
 				else {
 					// Append character to the current column.
-					currentColumn = [currentColumn stringByAppendingString:thisCharacter];
+					currentColumn = currentColumn + thisCharacter;
 				}
 			}
 			else {
-				if ([thisCharacter isEqualToString:@"\""]) {
+				if (thisCharacter == "\"") { // [thisCharacter isEqualToString:@"\""]) {
 					// Start a quoted column.
 					inQuote = YES;
 				}
-				else if ([thisCharacter isEqualToString:@","]) {
+				else if (thisCharacter == ",") { // [thisCharacter isEqualToString:@","]) {
 					// Save and start a new column.
 					[currentLine addObject:currentColumn];
-					currentColumn = @"";
+					currentColumn = new String;
 				}
 				else {
 					// Append character to the current column.
-					currentColumn = [currentColumn stringByAppendingString:thisCharacter];
+					currentColumn = currentColumn + thisCharacter;
 				}
 			}
 			
@@ -116,7 +126,7 @@
 			// Line was parsed successfully.  Save it.
 			
 			// At the end of each line, add the last column.
-			if ([currentColumn length]) {
+			if (currentColumn.length) {
 				[currentLine addObject:currentColumn];
 			}
 			else {
