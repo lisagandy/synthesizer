@@ -52,67 +52,12 @@
 		var arg1 = [arguments objectAtIndex:0];
 		groupingURL = [[CMURL alloc] initWithURLString:[CPString stringWithFormat:@"/input_data/%@-grouping.csv", arg1]
 		                        completionNotification:CMURLLoadedNotification];
+/*
 		valuesURL = [[CMURL alloc] initWithURLString:[CPString stringWithFormat:@"/input_data/%@-values.csv", arg1]
 		                      completionNotification:CMURLLoadedNotification];
+*/
 	}
 }
-
-/*
-- (void)setupColumnManager {
-	var allGroup = [[CMColumnGroup alloc] initWithName:@"All"];
-	[allGroup setAllGroup:YES];
-	var soloGroup = [[CMColumnGroup alloc] initWithName:@"Solo"];
-	[soloGroup setSoloGroup:YES];
-
-	var columnFoo = [[CMColumn alloc] initWithName:@"foo"];
-	var columnGoo = [[CMColumn alloc] initWithName:@"goo"];
-	var columnRoo = [[CMColumn alloc] initWithName:@"roo"];
-	
-	var derivedA = [[CMColumnGroup alloc] initWithName:@"A"]
-	[derivedA setMembers:@[ columnFoo, columnGoo, columnRoo ]];
-	
-	var derivedColumns = @[ allGroup,
-							soloGroup,
-							derivedA,
-							[[CMColumnGroup alloc] initWithName:@"B"],
-							[[CMColumnGroup alloc] initWithName:@"C"],
-							[[CMColumnGroup alloc] initWithName:@"D"],
-							[[CMColumnGroup alloc] initWithName:@"E"],
-							[[CMColumnGroup alloc] initWithName:@"F"],
-							[[CMColumnGroup alloc] initWithName:@"G"],
-							[[CMColumnGroup alloc] initWithName:@"H"],
-							[[CMColumnGroup alloc] initWithName:@"I"],
-							[[CMColumnGroup alloc] initWithName:@"J"],
-							[[CMColumnGroup alloc] initWithName:@"K"],
-							[[CMColumnGroup alloc] initWithName:@"L"],
-							[[CMColumnGroup alloc] initWithName:@"M"] ];
-	[[CMColumnManager sharedManager] setColumnGroups:derivedColumns];
-	
-	var sourceColumns = @[ columnFoo, columnGoo, columnRoo,
-						   [[CMColumn alloc] initWithName:@"101"],
-						   [[CMColumn alloc] initWithName:@"102"],
-						   [[CMColumn alloc] initWithName:@"103"],
-						   [[CMColumn alloc] initWithName:@"104"],
-						   [[CMColumn alloc] initWithName:@"105"],
-						   [[CMColumn alloc] initWithName:@"106"],
-						   [[CMColumn alloc] initWithName:@"107"],
-						   [[CMColumn alloc] initWithName:@"108"],
-						   [[CMColumn alloc] initWithName:@"109"],
-						   [[CMColumn alloc] initWithName:@"110"],
-						   [[CMColumn alloc] initWithName:@"111"],
-						   [[CMColumn alloc] initWithName:@"112"],
-						   [[CMColumn alloc] initWithName:@"113"],
-						   [[CMColumn alloc] initWithName:@"114"],
-						   [[CMColumn alloc] initWithName:@"115"],
-						   [[CMColumn alloc] initWithName:@"116"],
-						   [[CMColumn alloc] initWithName:@"117"],
-						   [[CMColumn alloc] initWithName:@"118"],
-						   [[CMColumn alloc] initWithName:@"119"],
-						   [[CMColumn alloc] initWithName:@"120"],
-						   [[CMColumn alloc] initWithName:@"121"] ];
-	[[CMColumnManager sharedManager] setColumns:sourceColumns];
-}
-*/
 
 - (void)setupViews {
 	window = [[CPWindow alloc] initWithContentRect:CGRectMakeZero() styleMask:CPBorderlessBridgeWindowMask];
@@ -155,7 +100,6 @@
 		groupingCSV = [[CMCSV alloc] initWithCSVText:[notifyObj data]];
 		[self groupingPostProcessing];
 	}
-/* 	alert([[notify object] data]); */
 }
 
 - (void)valuesPostProcessing {
@@ -200,11 +144,6 @@
 		}
 	}
 	
-/*
-	console.log("Groups: " + [groups allValues]);
-	console.log("Columns: " + columns);
-*/
-
 	var groupArray = [CPMutableArray arrayWithObjects:allGroup, soloGroup, nil];
 	var parsedGroups = [groups allValues];
 	
@@ -223,7 +162,6 @@
 	
 	// Tell the UI to update.
 	[sidebarView updateCollectionView];
-/* 	[mainView setSelectedGroup:allGroup];  */
 }
 
 @end
