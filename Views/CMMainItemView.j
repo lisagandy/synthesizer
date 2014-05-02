@@ -18,7 +18,7 @@
 	
 */
 	CPTextField label;
-	CPTextField countLabel;
+	CPTextField detailLabel;
 	
 	BOOL selected @accessors;
 	CPGradient selectedGradient;
@@ -46,7 +46,7 @@
 		selectedGradient = [[CPGradient alloc] initWithStartingColor:[CPColor colorWithWhite:0.4 alpha:1] endingColor:[CPColor colorWithWhite:0.55 alpha:1]];
 		deselectedGradient = [[CPGradient alloc] initWithStartingColor:[CPColor colorWithWhite:0.92 alpha:1] endingColor:[CPColor colorWithWhite:1 alpha:1]];
 		label = [aCoder decodeObjectForKey:@"Label"];
-		countLabel = [aCoder decodeObjectForKey:@"CountLabel"];
+		detailLabel = [aCoder decodeObjectForKey:@"DetailLabel"];
 	}
 	return self;
 }
@@ -54,7 +54,7 @@
 - (void)encodeWithCoder:(CPCoder)aCoder {
 	[super encodeWithCoder:aCoder];
 	[aCoder encodeConditionalObject:label forKey:@"Label"];
-	[aCoder encodeConditionalObject:countLabel forKey:@"CountLabel"];
+	[aCoder encodeConditionalObject:detailLabel forKey:@"DetailLabel"];
 }
 
 - (void)setSelected:(BOOL)isSelected {
@@ -64,6 +64,12 @@
 	[countLabel setTextColor:(isSelected ? [CPColor whiteColor] : [CPColor grayColor])];
 	[self setNeedsDisplay:YES];
 */
+}
+
+- (void)layoutSubviews {
+	var bounds = [self bounds];
+	[label setFrame:CGRectMake(bounds.origin.x + 10., bounds.origin.y, bounds.size.width - 20., bounds.size.height * .6)];
+	[detailLabel setFrame:CGRectMake(bounds.origin.x + 10., bounds.origin.y + (bounds.size.height * .6), bounds.size.width - 20., bounds.size.height * .4)];
 }
 
 - (void)drawRect:(CGRect)rect {
@@ -76,16 +82,26 @@
 
 - (void)setRepresentedObject:(id)anObject {
 	// anObject is of type CMColumn.
-	
+	var bounds = [self bounds];
+		
 	if (!label) {
-		label = [[CPTextField alloc] initWithFrame:CGRectInset([self bounds], 10.0, 0)];
+		label = [[CPTextField alloc] initWithFrame:CGRectMake(bounds.origin.x + 10., bounds.origin.y, bounds.size.width - 20., bounds.size.height * .6)];
 		[label setFont:[CPFont boldSystemFontOfSize:14.0]];
 		[label setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
-		[label setVerticalAlignment:CPCenterVerticalTextAlignment];
+		[label setVerticalAlignment:CPBottomVerticalTextAlignment];
 		[self addSubview:label];
 	}
 	
+	if (!detailLabel) {
+		detailLabel = [[CPTextField alloc] initWithFrame:CGRectMake(bounds.origin.x + 10., bounds.origin.y + (bounds.size.height * .6), bounds.size.width - 20., bounds.size.height * .4)];
+		[detailLabel setFont:[CPFont systemFontOfSize:10.0]];
+		[detailLabel setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
+		[detailLabel setVerticalAlignment:CPTopVerticalTextAlignment];
+		[self addSubview:detailLabel];
+	}
+	
 	[label setStringValue:[anObject name]];
+	[detailLabel setStringValue:[anObject spreadsheet]];
 }
 
 @end
