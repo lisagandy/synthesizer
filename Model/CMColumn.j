@@ -33,7 +33,7 @@
 
 - (CPComparisonResult)compare:(id)otherObject {
 	if ([otherObject isKindOfClass:[self class]]) {
-		return [[name lowercaseString] compare:[[otherObject name] lowercaseString]];	
+		return [name caseInsensitiveCompare:[otherObject name]];	
 	}
 	else {
 		return CPOrderedSame;
