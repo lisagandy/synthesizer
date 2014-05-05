@@ -75,11 +75,13 @@
 
 	sidebarView = [[CMSidebarView alloc] initWithFrame:CGRectMake(bounds.origin.x - splitterWidth, bounds.origin.y + headerViewHeight - 1, sidebarWidth + splitterWidth, bounds.size.height - headerViewHeight)];
 	[sidebarView setAutoresizingMask:CPViewMaxXMargin | CPViewHeightSizable];
-	[sidebarView setMainView:mainView];
 	
 	var splitView = [[CPView alloc] initWithFrame:CGRectMake(bounds.origin.x + sidebarWidth, bounds.origin.y + headerViewHeight, splitterWidth, bounds.size.height - headerViewHeight)];
 	[splitView setBackgroundColor:[CPColor darkGrayColor]];
 	[splitView setAutoresizingMask:CPViewMaxXMargin | CPViewHeightSizable];
+	
+	[headerView setMainView:mainView];
+	[sidebarView setMainView:mainView];
 	
 	[contentView addSubview:mainView];
 	[contentView addSubview:sidebarView];

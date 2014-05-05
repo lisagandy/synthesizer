@@ -16,6 +16,9 @@
 	
 	// The column source spreadsheet.
 	CPString spreadsheet @accessors;
+	
+	// A combined lowercase string for search purposes.
+	CPString searchString;
 }
 
 - (void)initWithName:(CPString)n spreadsheet:(CPString)s {
@@ -23,8 +26,19 @@
 	if (self) {
 		name = n;
 		spreadsheet = s;
+		searchString = [[CPString stringWithFormat:@"%@ %@", n ? n : @"", s ? s : @""] lowercaseString];
 	}
 	return self;
+}
+
+- (void)setName:(CPString)aString {
+	name = aString;
+	searchString = [[CPString stringWithFormat:@"%@ %@", name ? name : @"", spreadsheet ? spreadsheet : @""] lowercaseString];
+}
+
+- (void)setSpreadsheet:(CPString)aString {
+	spreadsheet = aString;
+	searchString = [[CPString stringWithFormat:@"%@ %@", name ? name : @"", spreadsheet ? spreadsheet : @""] lowercaseString];
 }
 
 - (CPString)description {
@@ -38,6 +52,11 @@
 	else {
 		return CPOrderedSame;
 	}
+}
+
+- (BOOL)matchesFilter:(CPString)filter {
+	// Assumes filter is already lowercase.
+	return ([searchString rangeOfString:filter].location != CPNotFound);
 }
 
 @end

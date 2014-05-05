@@ -28,26 +28,26 @@
 	return self;
 }
 
-- (void)parse:(CPString)csv {
-	// We bypass some of the strict Objective-J calls in this code to make parsing faster.  CPString objects are toll-free bridged with Javascript String objects.
-	// In this case, it's faster to do the parsing using the Javascript Strings instead of using the extra CPString layer.  You'll see below that csvLine is casted to String.
-	//   [CPString characterAtIndex:index]            ->  String.charAt(index)
-	//   [CPString isEqualToString:CPString]          ->  String == String
-	//   [CPString length]                            ->  String.length
-	//   [CPString stringByAppendingString:CPString]  ->  String = String + String
-	//
-	// These relatively simple changes result in a parser that runs 8-10 times faster than the original.
+// We bypass some of the strict Objective-J calls in this code to make parsing faster.  CPString objects are toll-free bridged with Javascript String objects.
+// In this case, it's faster to do the parsing using the Javascript Strings instead of using the extra CPString layer.  You'll see below that csvLine is casted to String.
+//   [CPString characterAtIndex:index]            ->  String.charAt(index)
+//   [CPString isEqualToString:CPString]          ->  String == String
+//   [CPString length]                            ->  String.length
+//   [CPString stringByAppendingString:CPString]  ->  String = String + String
+//
+// These relatively simple changes result in a parser that runs 8-10 times faster than the original.
 
-	// The cell value...
-	// "foo", "goo", "" ,,
-	// becomes...
-	// """foo"", ""goo"" """" ,,"
-	// 
-	// The cell value...
-	// "foo"
-	// becomes...
-	// """foo"""
-	
+// Formatting Notes:
+// The cell value...
+// "foo", "goo", "" ,,
+// becomes...
+// """foo"", ""goo"" """" ,,"
+// 
+// The cell value...
+// "foo"
+// becomes...
+// """foo"""
+- (void)parse:(CPString)csv {	
 	var parsedLines = [CPMutableArray array];
 
 	// Figure out what our line delimiter should be.  Excel exports seem to have a "\r" delimiter, but we also want to support \n and \n\r.

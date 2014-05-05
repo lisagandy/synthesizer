@@ -14,17 +14,14 @@
 
 @implementation CMMainView : CPView
 {
-/*
-	CGPoint originalClickInWindow;
-	CGRect originalFrame;
-
-*/
 	CPScrollView scrollView;
 	CPCollectionView collectionView;
 	
 	CGSize minItemSize;
 	
 	CMColumnGroup selectedGroup;
+	
+	CPString textFilter @accessors;
 }
 
 - (id)initWithFrame:(CGRect)aFrame {
@@ -61,7 +58,7 @@
 		[self addSubview:scrollView];
 		
 		selectedGroup = nil;
-		[collectionView setContent:[[CMColumnManager sharedManager] columns]];
+		[self updateContent];
 	} 
 	return self;
 }
@@ -69,6 +66,36 @@
 - (void)setFrame:(CGRect)aFrame {
 	[super setFrame:aFrame];
 	[self configureCollectionViewSize];
+}
+
+- (void)setTextFilter:(CPString)aFilter {
+	textFilter = [aFilter lowercaseString];
+	[self updateContent];
+}
+
+- (void)updateContent {
+	var contentArray = [CPArray array];
+	if (!selectedGroup) {
+		contentArray = [[CMColumnManager sharedManager] columns];
+	}
+	else {
+		if ([selectedGroup members]) contentArray = [selectedGroup members];
+	}
+	
+	// Apply the text filter.
+	if ([textFilter length]) {
+		var filteredItems = [CPMutableArray array];
+		for (var i = 0; i < [contentArray count]; i++) {
+			var /* CMColumn */ column = [contentArray objectAtIndex:i];
+			if ([column matchesFilter:textFilter]) {
+				[filteredItems addObject:column]; 
+			}
+		}
+		
+		contentArray = filteredItems;
+	}
+	
+	[collectionView setContent:contentArray];
 }
 
 - (void)configureCollectionViewSize {
@@ -82,7 +109,7 @@
 
 - (void)setSelectedGroup:(CMColumnGroup)aGroup {
 	selectedGroup = aGroup;
-	[collectionView setContent:[selectedGroup members] ? [selectedGroup members] : [CPArray array]];
+	[self updateContent];
 }
 
 /*
