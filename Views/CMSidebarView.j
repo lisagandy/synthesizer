@@ -51,6 +51,8 @@
 		
 		[collectionView setContent:[[CMColumnManager sharedManager] columnGroups]];
 		[collectionView setSelectionIndexes:[CPIndexSet indexSetWithIndex:0]];
+
+		[collectionView registerForDraggedTypes:[ "CMColumnDragItemType" ]];		
 	}
 	return self;
 }
@@ -76,14 +78,39 @@
 	}
 }
 
+- (CPDragOperation)collectionView:(CPCollectionView)cv validateDrop:(id)draggingInfo proposedIndex:(Function)proposedDropIndex dropOperation:(CPCollectionViewDropOperation)proposedDropOperation {
+    var /* CPData */ data = [[draggingInfo draggingPasteboard] dataForType:@"CMColumnDragItemType"];
+	var /* CMColumn */ column = [CPKeyedUnarchiver unarchiveObjectWithData:data];
+	var s = [CPString stringWithFormat:@"%d", proposedDropIndex()];
+	console.log(s);
+	if (column) {
+		if (proposedDropIndex() > 1) {
+			console.log(@"YES");
+			return CPDragOperationCopy;
+		}
+	}
+	
+	console.log(@"no");
+	return CPDragOperationNone;
+}
+
+- (BOOL)collectionView:(CPCollectionView)collectionView acceptDrop:(id)draggingInfo index:(CPInteger)index dropOperation:(CPCollectionViewDropOperation)dropOperation {
+	console.log(@"Accept");
+	return YES;
+}
+
+- (BOOL)collectionView:(CPCollectionView)collectionView canDragItemsAtIndexes:(CPIndexSet)indexes withEvent:(CPEvent)event {
+	return NO;
+}
+
 - (CPData)collectionView:(CPCollectionView)aCollectionView dataForItemsAtIndexes:(CPIndexSet)indices forType:(CPString)aType {
-	var items = [[CMColumnManager sharedManager] columnGroups];
-	return [CPKeyedArchiver archivedDataWithRootObject:[items objectAtIndex:[indices firstIndex]]];
+	return nil;
 }
 
 - (CPArray)collectionView:(CPCollectionView)aCollectionView dragTypesForItemsAtIndexes:(CPIndexSet)indices {
-	return ["CMSidebarItemType"];
+	return nil;
 }
+
 
 - (void)observeValueForKeyPath:(CPString)keyPath ofObject:(id)object change:(CPDictionary)change context:(void)context {
 	if (object == collectionView) {
@@ -102,4 +129,36 @@
 	
 }
 
+/* Drag methods */
+//- (void)performDragOperation:(CPDraggingInfo)aSender {
+//    var /* CPData */ data = [[aSender draggingPasteboard] dataForType:[ "CMColumnDragItemType" ]];
+//
+//	var /* CMColumn */ column = [CPKeyedUnarchiver unarchiveObjectWithData:data];
+//	
+//}
+//
+//- (void)draggingEntered:(CPDraggingInfo)aSender {
+//}
+//
+//- (void)draggingExited:(CPDraggingInfo)aSender {
+//}
+//
 @end
+
+
+@import <AppKit/CPCollectionView.j>
+@implementation CPCollectionView (Override)
+{
+}
+
+- (void)_createDropIndicatorIfNeeded {
+	// We always drop onto a collection view item, so we don't want one of these indicators.  Just create it and don't add it as a subview.
+    if (!_dropView)
+        _dropView = [[_CPCollectionViewDropIndicator alloc] initWithFrame:CGRectMake(-8, -8, 0, 0)];
+
+    [_dropView setFrameSize:CGSizeMake(10, _itemSize.height + _verticalMargin)];
+    //[self addSubview:_dropView];
+}
+
+@end
+
