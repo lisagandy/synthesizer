@@ -18,9 +18,13 @@
 	CGRect originalFrame;
 	
 	CPScrollView scrollView;
-	CPCollectionView collectionView @accessors;
+/* 	CPCollectionView collectionView @accessors; */
+	CPTableView tableView @accessors;
 	
 	CPMainView mainView @accessors;
+	
+	CPArray content;
+	CMSidebarItemView itemTemplate;
 }
 
 - (id)initWithFrame:(CGRect)aFrame {
@@ -31,6 +35,7 @@
 		[scrollView setAutohidesScrollers:NO];
 		[scrollView setHasHorizontalScroller:NO];
 		
+/*
 		collectionView = [[CPCollectionView alloc] initWithFrame:[[scrollView contentView] bounds]];
 		[collectionView setMinItemSize:CGSizeMake([self bounds].size.width, 34)];
 		[collectionView setMaxItemSize:CGSizeMake([self bounds].size.width, 34)];
@@ -45,14 +50,43 @@
 		var itemPrototype = [[CPCollectionViewItem alloc] init];
 		[itemPrototype setView:[[CMSidebarItemView alloc] initWithFrame:CGRectMakeZero()]];
 		[collectionView setItemPrototype:itemPrototype];
+*/
 
-		[scrollView setDocumentView:collectionView];
+		tableView = [[CPTableView alloc] initWithFrame:[[scrollView contentView] bounds]];
+		[tableView setRowHeight:34];
+		[tableView setGridStyleMask:CPTableViewSolidHorizontalGridLineMask];
+		//[tableView setBackgroundColor:[CPColor colorWithHexString:@"dce0e2"]];  // between this and the 1px vertical margin, we get line separators.
+		[tableView setHeaderView:nil];
+		[tableView setDataSource:self];
+		[tableView setDelegate:self];
+/* 		[tableView setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleNone]; */
+/* 		[tableView addObserver:self forKeyPath:@"selectedRowIndexes" options:(CPKeyValueObservingOptionNew) context:NULL]; */
+/* 		[tableView setSelectionHighlightStyle:CPTableViewSelectionHighlightStyleSourceList]; */
+		[tableView setSelectionHighlightColor:nil];
+		[tableView setSelectionGradientColors:@{ CPSourceListTopLineColor: [CPColor colorWithRed:0.4 green:0.4 blue:0.4 alpha:1],
+			                                     CPSourceListBottomLineColor: [CPColor colorWithRed:0.55 green:0.55 blue:0.55 alpha:1],
+			                                     CPSourceListGradient : CGGradientCreateWithColors(CGColorSpaceCreateDeviceRGB(), [ [CPColor colorWithRed:0.4 green:0.4 blue:0.4 alpha:1], [CPColor colorWithRed:0.55 green:0.55 blue:0.55 alpha:1] ], 0) }];
+		[tableView registerForDraggedTypes:[ "CMColumnDragItemType" ]];		
+
+		var tableColumn = [[CPTableColumn alloc] initWithIdentifier:@"Column 1"];
+		[tableColumn setWidth:[self bounds].size.width];
+/* 		[tableColumn setShowsHeader:NO]; */
+		[tableView addTableColumn:tableColumn];
+
+		[scrollView setDocumentView:tableView];
 		[self addSubview:scrollView];
-		
+
+		itemTemplate = [[CMSidebarItemView alloc] initWithFrame:CGRectMake(0, 0, 300, 34)];
+
+/*
 		[collectionView setContent:[[CMColumnManager sharedManager] columnGroups]];
 		[collectionView setSelectionIndexes:[CPIndexSet indexSetWithIndex:0]];
 
 		[collectionView registerForDraggedTypes:[ "CMColumnDragItemType" ]];		
+*/
+
+		content = [CPArray array];
+		[self updateCollectionView];
 	}
 	return self;
 }
@@ -68,65 +102,118 @@
 */
 
 - (void)updateCollectionView {
-	[collectionView setContent:[[CMColumnManager sharedManager] columnGroups]];
+/* 	[collectionView setContent:[[CMColumnManager sharedManager] columnGroups]]; */
+	content = [[CMColumnManager sharedManager] columnGroups];
 	
-	var items = [[CMColumnManager sharedManager] columnGroups];
-	var selectedIndex = [[collectionView selectionIndexes] firstIndex];
+	var selectedIndex = [tableView selectedRow];
+	if (selectedIndex == -1) selectedIndex = 0;
 	
-	if (selectedIndex < [items count]) {
-		[mainView setSelectedGroup:[items objectAtIndex:selectedIndex]];
+	if (selectedIndex < [content count]) {
+		[mainView setSelectedGroup:[content objectAtIndex:selectedIndex]];
+	}
+	
+	[tableView reloadData];
+}
+
+- (int)numberOfRowsInTableView:(CPTableView)aTableView {
+    return [content count];
+}
+
+- (CPView)tableView:(CPTableView)aTableView viewForTableColumn:(CPTableColumn)aTableColumn row:(CPInteger)aRowIndex {
+	var copy = [CPKeyedArchiver archivedDataWithRootObject:itemTemplate];
+	return [CPKeyedUnarchiver unarchiveObjectWithData:copy];
+}
+
+- (void)tableView:(CPTableView)aTableView objectValueForTableColumn:(CPTableColumn)aColumnu row:(int)aRow {
+    return content[aRow];
+}
+
+- (void)tableViewSelectionDidChange:(CPNotification)aNotification {
+	var selectedIndex = [tableView selectedRow];
+	
+	if (selectedIndex < [content count]) {
+		[mainView setSelectedGroup:[content objectAtIndex:selectedIndex]];
 	}
 }
 
-- (CPDragOperation)collectionView:(CPCollectionView)cv validateDrop:(id)draggingInfo proposedIndex:(Function)proposedDropIndex dropOperation:(CPCollectionViewDropOperation)proposedDropOperation {
+- (void)tableView:(CPTableView)aTableView willDisplayView:(CPView)aView forTableColumn:(CPTableColumn)aTableColumn row:(CPInteger)aRowIndex {
+	[aView setSelected:(aRowIndex == [aTableView selectedRow])];
+}
+
+
+- (BOOL)tableView:(CPTableView)aTableView acceptDrop:(id)draggingInfo row:(CPInteger)aRowIndex dropOperation:(CPTableViewDropOperation)anOperation {
+	if (anOperation == CPTableViewDropOn) {
+		var /* CMColumnGroup */ group = [content objectAtIndex:aRowIndex];
+	
+	    var /* CPData */ data = [[draggingInfo draggingPasteboard] dataForType:@"CMColumnDragItemType"];
+		var /* CMColumn */ column = [CPKeyedUnarchiver unarchiveObjectWithData:data];
+		[group addMember:column];
+		[tableView reloadData];
+	}
+}
+
+- (CPDragOperation)tableView:(CPTableView)aTableView validateDrop:(id)draggingInfo proposedRow:(CPInteger)aRowIndex proposedDropOperation:(CPTableViewDropOperation)anOperation {
+	if (anOperation == CPTableViewDropAbove) return CPDragOperationNone;
+
     var /* CPData */ data = [[draggingInfo draggingPasteboard] dataForType:@"CMColumnDragItemType"];
 	var /* CMColumn */ column = [CPKeyedUnarchiver unarchiveObjectWithData:data];
-	var s = [CPString stringWithFormat:@"%d", proposedDropIndex()];
-	console.log(s);
+/* 	var s = [CPString stringWithFormat:@"%d", aRowIndex]; */
+/* 	console.log(s); */
 	if (column) {
-		if (proposedDropIndex() > 1) {
-			console.log(@"YES");
+		if (aRowIndex > 1) {
+/* 			console.log(@"YES"); */
 			return CPDragOperationCopy;
 		}
 	}
 	
-	console.log(@"no");
+/* 	console.log(@"no"); */
 	return CPDragOperationNone;
 }
 
-- (BOOL)collectionView:(CPCollectionView)collectionView acceptDrop:(id)draggingInfo index:(CPInteger)index dropOperation:(CPCollectionViewDropOperation)dropOperation {
-	console.log(@"Accept");
-	return YES;
-}
-
-- (BOOL)collectionView:(CPCollectionView)collectionView canDragItemsAtIndexes:(CPIndexSet)indexes withEvent:(CPEvent)event {
-	return NO;
-}
-
-- (CPData)collectionView:(CPCollectionView)aCollectionView dataForItemsAtIndexes:(CPIndexSet)indices forType:(CPString)aType {
-	return nil;
-}
-
-- (CPArray)collectionView:(CPCollectionView)aCollectionView dragTypesForItemsAtIndexes:(CPIndexSet)indices {
-	return nil;
-}
+//- (CPDragOperation)collectionView:(CPCollectionView)cv validateDrop:(id)draggingInfo proposedIndex:(Function)proposedDropIndex dropOperation:(CPCollectionViewDropOperation)proposedDropOperation {
+//    var /* CPData */ data = [[draggingInfo draggingPasteboard] dataForType:@"CMColumnDragItemType"];
+//	var /* CMColumn */ column = [CPKeyedUnarchiver unarchiveObjectWithData:data];
+//	var s = [CPString stringWithFormat:@"%d", proposedDropIndex()];
+//	console.log(s);
+//	if (column) {
+//		if (proposedDropIndex() > 1) {
+//			console.log(@"YES");
+//			return CPDragOperationCopy;
+//		}
+//	}
+//	
+//	console.log(@"no");
+//	return CPDragOperationNone;
+//}
+//
+//- (BOOL)collectionView:(CPCollectionView)collectionView acceptDrop:(id)draggingInfo index:(CPInteger)index dropOperation:(CPCollectionViewDropOperation)dropOperation {
+//	console.log(@"Accept");
+//	return YES;
+//}
+//
+//- (BOOL)collectionView:(CPCollectionView)collectionView canDragItemsAtIndexes:(CPIndexSet)indexes withEvent:(CPEvent)event {
+//	return NO;
+//}
+//
+//- (CPData)collectionView:(CPCollectionView)aCollectionView dataForItemsAtIndexes:(CPIndexSet)indices forType:(CPString)aType {
+//	return nil;
+//}
+//
+//- (CPArray)collectionView:(CPCollectionView)aCollectionView dragTypesForItemsAtIndexes:(CPIndexSet)indices {
+//	return nil;
+//}
 
 
 - (void)observeValueForKeyPath:(CPString)keyPath ofObject:(id)object change:(CPDictionary)change context:(void)context {
-	if (object == collectionView) {
-		if ([keyPath isEqualToString:@"selectionIndexes"]) {
-			var items = [[CMColumnManager sharedManager] columnGroups];
-			var selectedIndex = [[collectionView selectionIndexes] firstIndex];
+	if (object == tableView) {
+		if ([keyPath isEqualToString:@"selectedRowIndexes"]) {
+			var selectedIndex = [tableView selectedRow];
 			
-			if (selectedIndex < [items count]) {
-				[mainView setSelectedGroup:[items objectAtIndex:selectedIndex]];
+			if (selectedIndex < [content count]) {
+				[mainView setSelectedGroup:[content objectAtIndex:selectedIndex]];
 			}
 		}
 	}
-}
-
-- (CPArray)columnGroups {
-	
 }
 
 /* Drag methods */

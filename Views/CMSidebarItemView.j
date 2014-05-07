@@ -76,16 +76,25 @@
 	}
 	else {
 		[deselectedGradient drawInRect:bounds angle:0];
-/*
-		CGContextSetFillColor(context, [CPColor whiteColor]); 
-		CGContextFillRect(context, bounds); 
-*/
 	}
+}
+
+- (void)setObjectValue:(id)anObject {
+	[self setRepresentedObject:anObject];
+}
+
+- (BOOL)setThemeState:(CPThemeState)state {
+	[self setSelected:YES];
+	return YES;
+}
+
+- (BOOL)unsetThemeState:(CPThemeState)state {
+	[self setSelected:NO];
+	return YES;
 }
 
 - (void)setRepresentedObject:(id)anObject {
 	// anObject is of type CMColumnGroup.
-	
 	if (!label) {
 		label = [[CPTextField alloc] initWithFrame:CGRectInset([self bounds], 10.0, 0)];
 		[label setFont:[CPFont boldSystemFontOfSize:14.0]];

@@ -21,7 +21,11 @@
 	
 	CMColumnGroup selectedGroup;
 	
+	// Text typed into the search box that we should use to filter the columns.
 	CPString textFilter @accessors;
+	
+	// The last array sent to the content of the collection view.  Used when dragging.
+	CPArray latestContent;
 }
 
 - (id)initWithFrame:(CGRect)aFrame {
@@ -95,6 +99,7 @@
 		contentArray = filteredItems;
 	}
 	
+	latestContent = contentArray;
 	[collectionView setContent:contentArray];
 }
 
@@ -123,12 +128,12 @@
 */
 
 - (CPData)collectionView:(CPCollectionView)aCollectionView dataForItemsAtIndexes:(CPIndexSet)indices forType:(CPString)aType {
-	var items = [selectedGroup members];
-	return [CPKeyedArchiver archivedDataWithRootObject:[items objectAtIndex:[indices firstIndex]]];
+	console.log("object: " + [latestContent objectAtIndex:[indices firstIndex]]);
+	return [CPKeyedArchiver archivedDataWithRootObject:[latestContent objectAtIndex:[indices firstIndex]]];
 }
 
 - (CPArray)collectionView:(CPCollectionView)aCollectionView dragTypesForItemsAtIndexes:(CPIndexSet)indices {
-	return ["CMSidebarItemType"];
+	return ["CMColumnDragItemType"];
 }
 
 - (void)observeValueForKeyPath:(CPString)keyPath ofObject:(id)object change:(CPDictionary)change context:(void)context {
