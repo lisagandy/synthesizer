@@ -26,18 +26,37 @@
 	if (self) {
 		name = n;
 		spreadsheet = s;
-		searchString = [[CPString stringWithFormat:@"%@ %@", n ? n : @"", s ? s : @""] lowercaseString];
+		[self updateSearchString];
 	}
 	return self;
 }
 
+- (id)initWithCoder:(CPCoder)aCoder {
+	self = [super init];
+	if (self) {
+		name = [aCoder decodeObjectForKey:@"CMColumn Name"];
+		spreadsheet = [aCoder decodeObjectForKey:@"CMColumn Spreadsheet"];
+		[self updateSearchString];
+	}
+	return self;
+}
+
+- (void)encodeWithCoder:(CPCoder)aCoder {
+	[aCoder encodeConditionalObject:name forKey:@"CMColumn Name"];
+	[aCoder encodeConditionalObject:spreadsheet forKey:@"CMColumn Spreadsheet"];
+}
+
 - (void)setName:(CPString)aString {
 	name = aString;
-	searchString = [[CPString stringWithFormat:@"%@ %@", name ? name : @"", spreadsheet ? spreadsheet : @""] lowercaseString];
+	[self updateSearchString];
 }
 
 - (void)setSpreadsheet:(CPString)aString {
 	spreadsheet = aString;
+	[self updateSearchString];
+}
+
+- (void)updateSearchString {
 	searchString = [[CPString stringWithFormat:@"%@ %@", name ? name : @"", spreadsheet ? spreadsheet : @""] lowercaseString];
 }
 
