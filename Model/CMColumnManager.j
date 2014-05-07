@@ -30,6 +30,8 @@ var CMColumnManager_sharedManager = nil;
 	if (self) {
 		columns = [CPArray array];
 		columnGroups = [CPArray array];
+		
+		console.log("Concerned about duplicate CMColumns in the columns array and the columnGroup members.  Have to check and see if this will become an issue with modifying column values.");
 	}
 	return self;
 }
