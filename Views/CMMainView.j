@@ -130,10 +130,6 @@
 - (CPData)collectionView:(CPCollectionView)aCollectionView dataForItemsAtIndexes:(CPIndexSet)indices forType:(CPString)aType {
 	console.log("object: " + [latestContent objectAtIndex:[indices firstIndex]]);
 	
-//	var data = [CPKeyedArchiver archivedDataWithRootObject:[latestContent objectAtIndex:[indices firstIndex]]];
-//	var column = [CPKeyedUnarchiver unarchiveObjectWithData:data];
-//	console.log("archive/unarchive:  " + column );
-	
 	return [CPKeyedArchiver archivedDataWithRootObject:[latestContent objectAtIndex:[indices firstIndex]]];
 }
 
