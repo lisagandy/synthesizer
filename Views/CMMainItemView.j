@@ -20,6 +20,8 @@
 	CPTextField label;
 	CPTextField detailLabel;
 	
+	CPButton deleteButton;
+	
 	BOOL selected @accessors;
 	CPGradient selectedGradient;
 	CPGradient deselectedGradient;
@@ -99,6 +101,16 @@
 		[detailLabel setVerticalAlignment:CPTopVerticalTextAlignment];
 		[self addSubview:detailLabel];
 	}
+	
+/*
+	if (!deleteButton) {
+		deleteButton = [[CPButton alloc] initWithFrame:CGRectMake(aFrame.origin.x + aFrame.size.width - 10 - 24., aFrame.origin.y + 0.5 * (aFrame.size.height - 24), 24, 24)];
+		[deleteButton setAutoresizingMask:CPViewMinXMargin];
+		[deleteButton setValue:[CPImage imageNamed:@"delete-normal"] forThemeAttribute:@"bezel-color" inState:CPThemeStateBordered];
+		[deleteButton setValue:[CPImage imageNamed:@"delete-hover"] forThemeAttribute:@"bezel-color" inState:CPThemeStateHovered];
+		[self addSubview:deleteButton];
+	}
+*/
 	
 	[label setStringValue:[anObject name]];
 	[detailLabel setStringValue:[anObject spreadsheet]];
