@@ -55,4 +55,15 @@ var CMColumnManager_sharedManager = nil;
 	return retArray;
 }
 
+/* Sometimes we duplicate CMColumn objects (when archiving/unarchiving during a drag operation, for instance).  This method will find the built-in column that is equal to the column passed in. */
+- (CMColumn)columnMatchingExternalColumn:(CMColumn)extColumn {
+	for (var i = 0; i < [columns count]; i++) {
+		var col = [columns objectAtIndex:i];
+		if ([col isEqualToColumn:extColumn]) {
+			return col;
+		}
+	}
+	return nil;
+}
+
 @end
