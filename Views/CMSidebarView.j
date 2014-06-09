@@ -147,8 +147,12 @@
 	
 	    var /* CPData */ data = [[draggingInfo draggingPasteboard] dataForType:@"CMColumnDragItemType"];
 		var /* CMColumn */ column = [CPKeyedUnarchiver unarchiveObjectWithData:data];
-		[group addMember:column];
+		
+		console.log("Adding column(" + [column name] + ") to group(" + [group name] + ")");
+		
+		[group addMember:[[CMColumnManager sharedManager] columnMatchingExternalColumn:column]];
 		[tableView reloadData];
+		[self updateCollectionView];
 	}
 }
 
@@ -159,6 +163,15 @@
 	var /* CMColumn */ column = [CPKeyedUnarchiver unarchiveObjectWithData:data];
 /* 	var s = [CPString stringWithFormat:@"%d", aRowIndex]; */
 /* 	console.log(s); */
+
+/*
+		console.log("----\nPasteboard: " + [draggingInfo draggingPasteboard] + "\n----");
+		console.log("----\nSource: " + [draggingInfo draggingSource] + "\n----");
+		console.log("----\nTypes:" + [[draggingInfo draggingPasteboard] types] + "\n----");
+*/
+		console.log("Validating column(" + [column name] + ", " + [data length] + ") to group(" + [[content objectAtIndex:aRowIndex] name] + ")");
+		
+
 	if (column) {
 		if (aRowIndex > 1) {
 /* 			console.log(@"YES"); */

@@ -24,7 +24,7 @@
 	// Text typed into the search box that we should use to filter the columns.
 	CPString textFilter @accessors;
 	
-	// The last array sent to the content of the collection view.  Used when dragging.
+	// The last array of CMColumn objects sent to the content of the collection view.  Used when dragging.
 	CPArray latestContent;
 }
 
@@ -129,6 +129,11 @@
 
 - (CPData)collectionView:(CPCollectionView)aCollectionView dataForItemsAtIndexes:(CPIndexSet)indices forType:(CPString)aType {
 	console.log("object: " + [latestContent objectAtIndex:[indices firstIndex]]);
+	
+//	var data = [CPKeyedArchiver archivedDataWithRootObject:[latestContent objectAtIndex:[indices firstIndex]]];
+//	var column = [CPKeyedUnarchiver unarchiveObjectWithData:data];
+//	console.log("archive/unarchive:  " + column );
+	
 	return [CPKeyedArchiver archivedDataWithRootObject:[latestContent objectAtIndex:[indices firstIndex]]];
 }
 
