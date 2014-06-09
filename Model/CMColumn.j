@@ -42,8 +42,8 @@
 }
 
 - (void)encodeWithCoder:(CPCoder)aCoder {
-	[aCoder encodeConditionalObject:name forKey:@"CMColumn Name"];
-	[aCoder encodeConditionalObject:spreadsheet forKey:@"CMColumn Spreadsheet"];
+	[aCoder encodeObject:name forKey:@"CMColumn Name"];
+	[aCoder encodeObject:spreadsheet forKey:@"CMColumn Spreadsheet"];
 }
 
 - (void)setName:(CPString)aString {
@@ -62,6 +62,10 @@
 
 - (CPString)description {
 	return [CPString stringWithFormat:@"CMColumn {\n    Name: %@\n    Spreadsheet: %@\n}", name ? name : @"", spreadsheet ? spreadsheet : @""];
+}
+
+- (BOOL)isEqualToColumn:(CMColumn)otherColumn {
+	return [name isEqualToString:[otherColumn name]] && [spreadsheet isEqualToString:[otherColumn spreadsheet]];
 }
 
 - (CPComparisonResult)compare:(id)otherObject {
