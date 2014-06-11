@@ -102,18 +102,27 @@
 		[self addSubview:detailLabel];
 	}
 	
-/*
 	if (!deleteButton) {
-		deleteButton = [[CPButton alloc] initWithFrame:CGRectMake(aFrame.origin.x + aFrame.size.width - 10 - 24., aFrame.origin.y + 0.5 * (aFrame.size.height - 24), 24, 24)];
+		deleteButton = [[CPButton alloc] initWithFrame:CGRectMake(bounds.origin.x + bounds.size.width - 10 - 24., bounds.origin.y + 0.5 * (bounds.size.height - 24) + 24, 24, 24)];
 		[deleteButton setAutoresizingMask:CPViewMinXMargin];
-		[deleteButton setValue:[CPImage imageNamed:@"delete-normal"] forThemeAttribute:@"bezel-color" inState:CPThemeStateBordered];
-		[deleteButton setValue:[CPImage imageNamed:@"delete-hover"] forThemeAttribute:@"bezel-color" inState:CPThemeStateHovered];
+		[deleteButton setImage:[[CPImage alloc] initWithContentsOfFile:("Resources/delete-normal.png") size:CPSizeMake(24, 24)]];
+		[deleteButton setAlternateImage:[[CPImage alloc] initWithContentsOfFile:("Resources/delete-hover.png") size:CPSizeMake(24, 24)]];
+		[deleteButton setBordered:NO];
+		[deleteButton setTarget:self];
+		[deleteButton setAction:@selector(deleteButtonClicked:)];
+/*
+		[deleteButton setValue:[[CPImage alloc] initWithContentsOfFile:("Resources/delete-normal.png") size:CPSizeMake(24, 24)] forThemeAttribute:@"bezel-color" inState:CPThemeStateBordered];
+		[deleteButton setValue:[[CPImage alloc] initWithContentsOfFile:("Resources/delete-hover.png") size:CPSizeMake(24, 24)] forThemeAttribute:@"bezel-color" inState:CPThemeStateHovered];
+*/
 		[self addSubview:deleteButton];
 	}
-*/
 	
 	[label setStringValue:[anObject name]];
 	[detailLabel setStringValue:[anObject spreadsheet]];
+}
+
+- (IBAction)deleteButtonClicked:(id)sender {
+	console.log("Click");
 }
 
 @end
