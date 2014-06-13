@@ -19,9 +19,7 @@
 */
 	CPTextField label;
 	CPTextField detailLabel;
-	
-	CPButton deleteButton;
-	
+		
 	BOOL selected @accessors;
 	CPGradient selectedGradient;
 	CPGradient deselectedGradient;
@@ -101,22 +99,7 @@
 		[detailLabel setVerticalAlignment:CPTopVerticalTextAlignment];
 		[self addSubview:detailLabel];
 	}
-	
-	if (!deleteButton) {
-		deleteButton = [[CPButton alloc] initWithFrame:CGRectMake(bounds.origin.x + bounds.size.width - 10 - 24., bounds.origin.y + 0.5 * (bounds.size.height - 24) + 24, 24, 24)];
-		[deleteButton setAutoresizingMask:CPViewMinXMargin];
-		[deleteButton setImage:[[CPImage alloc] initWithContentsOfFile:("Resources/delete-normal.png") size:CPSizeMake(24, 24)]];
-		[deleteButton setAlternateImage:[[CPImage alloc] initWithContentsOfFile:("Resources/delete-hover.png") size:CPSizeMake(24, 24)]];
-		[deleteButton setBordered:NO];
-		[deleteButton setTarget:self];
-		[deleteButton setAction:@selector(deleteButtonClicked:)];
-/*
-		[deleteButton setValue:[[CPImage alloc] initWithContentsOfFile:("Resources/delete-normal.png") size:CPSizeMake(24, 24)] forThemeAttribute:@"bezel-color" inState:CPThemeStateBordered];
-		[deleteButton setValue:[[CPImage alloc] initWithContentsOfFile:("Resources/delete-hover.png") size:CPSizeMake(24, 24)] forThemeAttribute:@"bezel-color" inState:CPThemeStateHovered];
-*/
-		[self addSubview:deleteButton];
-	}
-	
+		
 	[label setStringValue:[anObject name]];
 	[detailLabel setStringValue:[anObject spreadsheet]];
 }
