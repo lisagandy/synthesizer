@@ -29,8 +29,6 @@
 		[title setAlignment:CPCenterTextAlignment];
 		[title setVerticalAlignment:CPCenterVerticalTextAlignment];
 		[title setTextColor:[CPColor whiteColor]];
-		[title setTextShadowColor:[CPColor lightGrayColor]];
-		[title setTextShadowOffset:CGSizeMake(0, 1)];
 		[title setStringValue:@"Column Merger"];
 		[self addSubview:title];
 
