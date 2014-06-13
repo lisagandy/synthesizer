@@ -30,8 +30,6 @@ var CMColumnManager_sharedManager = nil;
 	if (self) {
 		columns = [CPArray array];
 		columnGroups = [CPArray array];
-		
-		console.log("Concerned about duplicate CMColumns in the columns array and the columnGroup members.  Have to check and see if this will become an issue with modifying column values.");
 	}
 	return self;
 }
@@ -39,20 +37,34 @@ var CMColumnManager_sharedManager = nil;
 - (CPArray)soloColumns {
 	// Return the columns without a group.
 	var retArray = [CPMutableArray array];
-	if ([columns count]) [retArray addObjectsFromArray:columns];
 	
-	for (var i = 0; i < [columnGroups count]; i++) {
-		var group = [columnGroups objectAtIndex:i];
-		if ([group allGroup]) continue;			// Don't remove All columns.
-		if ([group soloGroup]) continue;		// Stops a circular call stack.
-		
-		var members = [[columnGroups objectAtIndex:i] members];
-		if ([members count]) {
-			[retArray removeObjectsInArray:members];
-		}
+	for (var i = 0; i < [columns count]; i++) {
+		var column = [columns objectAtIndex:i];
+		if (![column group]) [retArray addObject:column];
 	}
 	
 	return retArray;
+}
+
+- (CPArray)columnsInGroup:(CMColumnGroup)group {
+	if ([group soloGroup]) {
+		return [self soloColumns];
+	}
+	else if ([group allGroup]) {
+		return [self columns];
+	}
+	else {
+		var retArray = [CPMutableArray array];
+		var count = [columns count];
+		for (var i = 0; i < count; i++) {
+			var column = [columns objectAtIndex:i];
+			if ([column group] == group) {
+				[retArray addObject:column];
+			}
+		}
+		
+		return retArray;	
+	}	
 }
 
 /* Sometimes we duplicate CMColumn objects (when archiving/unarchiving during a drag operation, for instance).  This method will find the built-in column that is equal to the column passed in. */

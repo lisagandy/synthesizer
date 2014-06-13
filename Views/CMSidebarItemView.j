@@ -115,7 +115,7 @@
 	}
 
 	[label setStringValue:[anObject name]];
-	var memberCount = [[anObject members] count];
+	var memberCount = [[[CMColumnManager sharedManager] columnsInGroup:anObject] count];
 	[countLabel setStringValue:(memberCount > 0) ? [CPString stringWithFormat:@"%d", memberCount] : @""];
 
 /*

@@ -15,9 +15,11 @@
 	// The column name.
 	CPString name @accessors;
 	
+/*
 	// An array of CMColumn objects that are members of this group.  
 	CPArray members @accessors;
 	
+*/
 	// If YES, then this pseudo-group is for showing all source spreadsheet columns.
 	BOOL allGroup @accessors;
 	
@@ -34,7 +36,7 @@
 }
 
 - (CPString)description {
-	return [CPString stringWithFormat:@"CMColumnGroup {\n    Name: %@\n    Member count: %d\n}", name ? name : @"", members ? [members count] : 0];
+	return [CPString stringWithFormat:@"CMColumnGroup (%@)", name ? name : @""];
 }
 
 - (CPComparisonResult)compare:(id)otherObject {
@@ -46,6 +48,7 @@
 	}
 }
 
+/*
 - (CPArray)members {
 	if (allGroup) {
 		var retArray = [[CMColumnManager sharedManager] columns];
@@ -70,5 +73,6 @@
 		members = @[ column ];
 	}
 }
+*/
 
 @end

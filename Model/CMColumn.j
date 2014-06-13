@@ -8,6 +8,7 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
+@import "CMColumnGroup.j"
 
 @implementation CMColumn : CPObject
 {
@@ -19,6 +20,8 @@
 	
 	// A combined lowercase string for search purposes.
 	CPString searchString;
+	
+	CMColumnGroup group @accessors;
 }
 
 - (void)initWithName:(CPString)n spreadsheet:(CPString)s {
@@ -70,7 +73,13 @@
 
 - (CPComparisonResult)compare:(id)otherObject {
 	if ([otherObject isKindOfClass:[self class]]) {
-		return [name caseInsensitiveCompare:[otherObject name]];	
+		var nameComparison = [name caseInsensitiveCompare:[otherObject name]];
+		if (nameComparison == CPOrderedSame) {
+			return [spreadsheet caseInsensitiveCompare:[otherObject spreadsheet]];
+		}
+		else {
+			return nameComparison;
+		}
 	}
 	else {
 		return CPOrderedSame;

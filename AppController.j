@@ -141,7 +141,7 @@
 					[groups setObject:groupObject forKey:groupName];
 				}
 				
-				[groupObject addMember:c];
+				[c setGroup:groupObject];
 			}
 		}
 	}

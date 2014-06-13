@@ -113,6 +113,11 @@
 	}
 	
 	[tableView reloadData];
+	if (selectedIndex == 0) {
+		if ([content count]) {
+			[tableView selectRowIndexes:[CPIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
+		}
+	}
 }
 
 - (int)numberOfRowsInTableView:(CPTableView)aTableView {
@@ -144,11 +149,13 @@
 - (BOOL)tableView:(CPTableView)aTableView acceptDrop:(id)draggingInfo row:(CPInteger)aRowIndex dropOperation:(CPTableViewDropOperation)anOperation {
 	if (anOperation == CPTableViewDropOn) {
 		var /* CMColumnGroup */ group = [content objectAtIndex:aRowIndex];
+		if ([group allGroup]) group = nil;		// If dragged to the All group, then remove it from any other group.
+		if ([group soloGroup]) group = nil;		// If dragged to the Solo group, then remove it from any other group.
 	
 	    var /* CPData */ data = [[draggingInfo draggingPasteboard] dataForType:@"CMColumnDragItemType"];
 		var /* CMColumn */ column = [CPKeyedUnarchiver unarchiveObjectWithData:data];
-				
-		[group addMember:[[CMColumnManager sharedManager] columnMatchingExternalColumn:column]];
+		
+		[[[CMColumnManager sharedManager] columnMatchingExternalColumn:column] setGroup:group];
 		[tableView reloadData];
 		[self updateCollectionView];
 	}
@@ -161,9 +168,9 @@
 	var /* CMColumn */ column = [CPKeyedUnarchiver unarchiveObjectWithData:data];
 
 	if (column) {
-		if (aRowIndex > 1) {
+//		if (aRowIndex > 1) {
 			return CPDragOperationCopy;
-		}
+//		}
 	}
 	
 	return CPDragOperationNone;

@@ -83,7 +83,8 @@
 		contentArray = [[CMColumnManager sharedManager] columns];
 	}
 	else {
-		if ([selectedGroup members]) contentArray = [selectedGroup members];
+		var members = [[CMColumnManager sharedManager] columnsInGroup:selectedGroup];
+		if (members) contentArray = members;
 	}
 	
 	// Apply the text filter.
@@ -128,8 +129,6 @@
 */
 
 - (CPData)collectionView:(CPCollectionView)aCollectionView dataForItemsAtIndexes:(CPIndexSet)indices forType:(CPString)aType {
-	console.log("object: " + [latestContent objectAtIndex:[indices firstIndex]]);
-	
 	return [CPKeyedArchiver archivedDataWithRootObject:[latestContent objectAtIndex:[indices firstIndex]]];
 }
 
