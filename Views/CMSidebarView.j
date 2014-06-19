@@ -56,12 +56,12 @@
 		itemTemplate = [[CMSidebarItemView alloc] initWithFrame:CGRectMake(0, 0, 300, 34)];
 
 		content = [CPArray array];
-		[self updateCollectionView];
+		[self updateContent];
 	}
 	return self;
 }
 
-- (void)updateCollectionView {
+- (void)updateContent {
 	content = [[CMColumnManager sharedManager] columnGroups];
 	
 	var selectedIndex = [tableView selectedRow];
@@ -116,7 +116,7 @@
 		
 		[[[CMColumnManager sharedManager] columnMatchingExternalColumn:column] setGroup:group];
 		[tableView reloadData];
-		[self updateCollectionView];
+		[self updateContent];
 	}
 }
 

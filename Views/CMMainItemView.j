@@ -59,9 +59,10 @@
 
 - (void)setSelected:(BOOL)isSelected {
 	selected = isSelected;
+
 /*
 	[label setTextColor:(isSelected ? [CPColor whiteColor] : [CPColor blackColor])];
-	[countLabel setTextColor:(isSelected ? [CPColor whiteColor] : [CPColor grayColor])];
+	[detailLabel setTextColor:(isSelected ? [CPColor whiteColor] : [CPColor grayColor])];
 	[self setNeedsDisplay:YES];
 */
 }
@@ -72,12 +73,18 @@
 	[detailLabel setFrame:CGRectMake(bounds.origin.x + 10., bounds.origin.y + (bounds.size.height * .6), bounds.size.width - 20., bounds.size.height * .4)];
 }
 
+/*
 - (void)drawRect:(CGRect)rect {
 	var bounds = [self bounds]; 
 	var context = [[CPGraphicsContext currentContext] graphicsPort]; 
 
 	CGContextSetFillColor(context, [CPColor whiteColor]); 
 	CGContextFillRect(context, bounds); 
+}
+*/
+
+- (void)setObjectValue:(id)anObject {
+	[self setRepresentedObject:anObject];
 }
 
 - (void)setRepresentedObject:(id)anObject {
@@ -104,8 +111,14 @@
 	[detailLabel setStringValue:[anObject spreadsheet]];
 }
 
-- (IBAction)deleteButtonClicked:(id)sender {
-	console.log("Click");
+- (BOOL)setThemeState:(CPThemeState)state {
+	[self setSelected:YES];
+	return YES;
+}
+
+- (BOOL)unsetThemeState:(CPThemeState)state {
+	[self setSelected:NO];
+	return YES;
 }
 
 @end

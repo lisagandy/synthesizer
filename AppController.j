@@ -163,7 +163,7 @@
 	[[CMColumnManager sharedManager] setColumns:columns ? columns : [CPArray array]];
 	
 	// Tell the UI to update.
-	[sidebarView updateCollectionView];
+	[sidebarView updateContent];
 }
 
 @end
