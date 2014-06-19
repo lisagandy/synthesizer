@@ -15,7 +15,6 @@
 @implementation CMMainView : CPView
 {
 	CPScrollView scrollView;
-	//CPCollectionView collectionView;
 	CPTableView tableView;
 	
 	CGSize minItemSize;
@@ -40,32 +39,7 @@
 		[scrollView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
 		[scrollView setHasHorizontalScroller:NO];
 		[scrollView setHasVerticalScroller:YES];
-/* 		[scrollView setAutohidesScrollers:NO]; */
-/* 		[scrollView setVerticalScroller:[[CMScroller alloc] initWithFrame:CGRectMake(0, 0, 0, 0)]]; */
-/* 		[[scrollView verticalScroller] setAllowFadingOut:NO]; */
-/* 		[scrollView setScrollerStyle:CPScrollerStyleLegacy]; */
-		
-/*
-		collectionView = [[CPCollectionView alloc] initWithFrame:[[scrollView contentView] bounds]];
-		[collectionView setMinItemSize:CGSizeMake(150, 44)];
- 		[collectionView setMaxItemSize:CGSizeMake(5000, 44)];
-		[collectionView setMaxNumberOfColumns:1];
-		[collectionView setMaxNumberOfRows:5000];
-		[collectionView setAllowsEmptySelection:NO];
-		[collectionView setAllowsMultipleSelection:NO];
-		[collectionView setVerticalMargin:1.];
-		[collectionView setBackgroundColor:[CPColor colorWithHexString:@"dce0e2"]];  // between this and the 1px vertical margin, we get line separators.
-		[collectionView setDelegate:self];
-		[collectionView addObserver:self forKeyPath:@"selectionIndexes" options:(CPKeyValueObservingOptionNew) context:NULL];
-		
-		var itemPrototype = [[CPCollectionViewItem alloc] init];
-		[itemPrototype setView:[[CMMainItemView alloc] initWithFrame:CGRectMakeZero()]];
-		[collectionView setItemPrototype:itemPrototype];
-
-		[scrollView setDocumentView:collectionView];
-		[self addSubview:scrollView];
-*/
-		
+				
 		tableView = [[CPTableView alloc] initWithFrame:[[scrollView contentView] bounds]];
 		[tableView setRowHeight:44];
 		[tableView setGridStyleMask:CPTableViewSolidHorizontalGridLineMask];
@@ -101,13 +75,6 @@
 	return self;
 }
 
-/*
-- (void)setFrame:(CGRect)aFrame {
-	[super setFrame:aFrame];
-	[self configureCollectionViewSize];
-}
-*/
-
 - (void)setTextFilter:(CPString)aFilter {
 	textFilter = [aFilter lowercaseString];
 	[self updateContent];
@@ -137,20 +104,8 @@
 	}
 	
 	latestContent = contentArray;
-	//[collectionView setContent:contentArray];
 	[tableView reloadData];
 }
-
-/*
-- (void)configureCollectionViewSize {
-	// Every time our view size changes, we need to call this again so we can configure how the collection view is displayed.
-	var bounds = [self bounds];
-	
-	// Calculate the max number of items we can fit on screen using minItemSize.
-	var numRows = FLOOR(bounds.size.height / minItemSize);
-	[collectionView setMaxNumberOfRows:numRows];
-}
-*/
 
 - (void)setSelectedGroup:(CMColumnGroup)aGroup {
 	selectedGroup = aGroup;
@@ -184,35 +139,13 @@
 	[aView setSelected:(aRowIndex == [aTableView selectedRow])];
 }
 
+- (BOOL)tableView:(CPTableView)aTableView writeRowsWithIndexes:(CPIndexSet)rowIndexes toPasteboard:(CPPasteboard)pasteboard {
+    var encodedData = [CPKeyedArchiver archivedDataWithRootObject:[latestContent objectAtIndex:[rowIndexes firstIndex]]];
+    [pasteboard declareTypes:[CPArray arrayWithObject:"CMColumnDragItemType"] owner:self];
+    [pasteboard setData:encodedData forType:"CMColumnDragItemType"];
 
-// - (BOOL)tableView:(CPTableView)aTableView acceptDrop:(id)draggingInfo row:(CPInteger)aRowIndex dropOperation:(CPTableViewDropOperation)anOperation {
-// 	if (anOperation == CPTableViewDropOn) {
-// 		var /* CMColumnGroup */ group = [content objectAtIndex:aRowIndex];
-// 		if ([group allGroup]) group = nil;		// If dragged to the All group, then remove it from any other group.
-// 		if ([group soloGroup]) group = nil;		// If dragged to the Solo group, then remove it from any other group.
-// 	
-// 	    var /* CPData */ data = [[draggingInfo draggingPasteboard] dataForType:@"CMColumnDragItemType"];
-// 		var /* CMColumn */ column = [CPKeyedUnarchiver unarchiveObjectWithData:data];
-// 		
-// 		[[[CMColumnManager sharedManager] columnMatchingExternalColumn:column] setGroup:group];
-// 		[tableView reloadData];
-// 		[self updateContent];
-// 	}
-// }
-// 
-// - (CPDragOperation)tableView:(CPTableView)aTableView validateDrop:(id)draggingInfo proposedRow:(CPInteger)aRowIndex proposedDropOperation:(CPTableViewDropOperation)anOperation {
-// 	if (anOperation == CPTableViewDropAbove) return CPDragOperationNone;
-// 
-//     var /* CPData */ data = [[draggingInfo draggingPasteboard] dataForType:@"CMColumnDragItemType"];
-// 	var /* CMColumn */ column = [CPKeyedUnarchiver unarchiveObjectWithData:data];
-// 
-// 	if (column) {
-// 		return CPDragOperationCopy;
-// 	}
-// 	
-// 	return CPDragOperationNone;
-// }
-
+    return YES;
+}
 
 /*
 - (void)drawRect:(CGRect)rect {
@@ -222,31 +155,6 @@
 	CGContextSetFillColor(context, [CPColor yellowColor]); 
 	CGContextFillRect(context, CGRectMake(bounds.origin.x + 5, bounds.origin.y + 5, bounds.size.width - 10., bounds.size.height - 10.)); 
 }
-
-- (CPData)collectionView:(CPCollectionView)aCollectionView dataForItemsAtIndexes:(CPIndexSet)indices forType:(CPString)aType {
-	return [CPKeyedArchiver archivedDataWithRootObject:[latestContent objectAtIndex:[indices firstIndex]]];
-}
-
-- (CPArray)collectionView:(CPCollectionView)aCollectionView dragTypesForItemsAtIndexes:(CPIndexSet)indices {
-	return ["CMColumnDragItemType"];
-}
-
-- (void)observeValueForKeyPath:(CPString)keyPath ofObject:(id)object change:(CPDictionary)change context:(void)context {
-	if (object == collectionView) {
-		if ([keyPath isEqualToString:@"selectionIndexes"]) {
-			var collectionViewItems = [collectionView items];
-			var selectedIndex = [[collectionView selectionIndexes] firstIndex];
-		}
-	}
-}
 */
-
-- (BOOL)tableView:(CPTableView)aTableView writeRowsWithIndexes:(CPIndexSet)rowIndexes toPasteboard:(CPPasteboard)pasteboard {
-    var encodedData = [CPKeyedArchiver archivedDataWithRootObject:[latestContent objectAtIndex:[rowIndexes firstIndex]]];
-    [pasteboard declareTypes:[CPArray arrayWithObject:"CMColumnDragItemType"] owner:self];
-    [pasteboard setData:encodedData forType:"CMColumnDragItemType"];
-
-    return YES;
-}
 
 @end
