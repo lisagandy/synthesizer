@@ -173,6 +173,11 @@
 	return retArray;
 }
 
+- (CPArray)arrayArray {
+	// Return an array of arrays.  Second level are columns on each line.
+	return lines;
+}
+
 @end
 
 

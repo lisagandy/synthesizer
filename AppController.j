@@ -52,10 +52,8 @@
 		var arg1 = [arguments objectAtIndex:0];
 		groupingURL = [[CMURL alloc] initWithURLString:[CPString stringWithFormat:@"/input_data/%@-grouping.csv", arg1]
 		                        completionNotification:CMURLLoadedNotification];
-/*
 		valuesURL = [[CMURL alloc] initWithURLString:[CPString stringWithFormat:@"/input_data/%@-values.csv", arg1]
 		                      completionNotification:CMURLLoadedNotification];
-*/
 	}
 }
 
@@ -105,6 +103,28 @@
 }
 
 - (void)valuesPostProcessing {
+	var valueArrays = [valuesCSV arrayArray];
+	if ([valueArrays count] == 0) return;
+	
+	var /* CPDictionary */ columnValues = [CPMutableDictionary dictionary];
+	
+	var /* CPArray */ columnNames = [valueArrays objectAtIndex:0];
+	for (var columnIndex = 0; columnIndex < [columnNames count]; columnIndex++) {
+		var thisColumnValues = [CPMutableArray array];
+		for (var i = 1; i < [valueArrays count]; i++) {
+			var /* CPArray */ lineArray = [valueArrays objectAtIndex:i];
+			if ([lineArray count] > columnIndex) {
+				[thisColumnValues addObject:[lineArray objectAtIndex:columnIndex]];
+			}
+			else {
+				[thisColumnValues addObject:@""];
+			}
+		}
+		
+		[columnValues setObject:thisColumnValues forKey:[columnNames objectAtIndex:columnIndex]];
+	}
+	
+	[[CMColumnManager sharedManager] setColumnValues:columnValues];
 }
 
 - (void)groupingPostProcessing {

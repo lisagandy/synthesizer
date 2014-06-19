@@ -18,6 +18,9 @@ var CMColumnManager_sharedManager = nil;
 
 	// An array of CMColumnGroup objects.  These show up in the sidebar.
 	CPArray columnGroups @accessors;
+	
+	// A dictionary of CPArray objects.  Each array has string values.
+	CPDictionary columnValues @accessors;
 }
 
 + (CMColumnManager)sharedManager {
@@ -76,6 +79,10 @@ var CMColumnManager_sharedManager = nil;
 		}
 	}
 	return nil;
+}
+
+- (CPArray)valuesForColumn:(CMColumn)column {
+	
 }
 
 @end
