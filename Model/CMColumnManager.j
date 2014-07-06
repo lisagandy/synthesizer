@@ -9,6 +9,8 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+@import "CMColumn.j"
+
 var CMColumnManager_sharedManager = nil;
 
 @implementation CMColumnManager : CPObject
@@ -18,9 +20,6 @@ var CMColumnManager_sharedManager = nil;
 
 	// An array of CMColumnGroup objects.  These show up in the sidebar.
 	CPArray columnGroups @accessors;
-	
-	// A dictionary of CPArray objects.  Each array has string values.
-	CPDictionary columnValues @accessors;
 }
 
 + (CMColumnManager)sharedManager {
@@ -81,8 +80,9 @@ var CMColumnManager_sharedManager = nil;
 	return nil;
 }
 
-- (CPArray)valuesForColumn:(CMColumn)column {
-	
+- (CMColumn)columnWithName:(CPString)name spreadsheet:(CPString)spreadsheet {
+	var searchColumn = [[CMColumn alloc] initWithName:name spreadsheet:spreadsheet];
+	return [self columnMatchingExternalColumn:searchColumn];
 }
 
 @end
