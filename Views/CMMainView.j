@@ -11,11 +11,13 @@
 @import "CMMainItemView.j"
 @import "../Model/CMColumnManager.j"
 @import "../Base/CMScroller.j"
+@import "CMValueEditingView.j"
 
 @implementation CMMainView : CPView
 {
 	CPScrollView scrollView;
 	CPTableView tableView;
+	CMValueEditingView valueEditor;
 	
 	CGSize minItemSize;
 	
@@ -46,6 +48,8 @@
 		[tableView setHeaderView:nil];
 		[tableView setDataSource:self];
 		[tableView setDelegate:self];
+		[tableView setTarget:self];
+		[tableView setDoubleAction:@selector(rowDoubleClicked:)];
 		[tableView setSelectionHighlightColor:[CPColor colorWithWhite:0.9 alpha:1]];
 		tableView._unfocusedSelectionHighlightColor = [CPColor colorWithWhite:0.9 alpha:1];
 /*
@@ -145,6 +149,40 @@
     [pasteboard setData:encodedData forType:"CMColumnDragItemType"];
 
     return YES;
+}
+
+- (void)rowDoubleClicked:(id)sender {
+	console.log("clicked " + [self.tableView clickedRow]);
+	var /* CMColumn */ columnClicked = nil;
+	if ([self.tableView clickedRow] < [latestContent count]) {
+		columnClicked = latestContent[[tableView clickedRow]];
+	}
+	
+	if (columnClicked) [self openValueEditor:columnClicked];
+}
+
+- (void)openValueEditor:(CMColumn)editingColumn {
+	if (!valueEditor) {
+		valueEditor = [[CMValueEditingView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+		[valueEditor setMainView:self];
+		[valueEditor setAutoresizingMask:CPViewMinXMargin | CPViewMaxXMargin | CPViewMinYMargin | CPViewMaxYMargin | CPViewHeightSizable];
+	}
+	
+	var /* CPView */ sv = [self superview];
+	var /* CGRect */ svBounds = [sv bounds];
+	
+	var /* CGSize */ editorSize = CGSizeMake(MIN(500, svBounds.size.width - 100), MIN(700, svBounds.size.height - 100));
+	
+	[valueEditor setFrame:CGRectMake((svBounds.size.width - editorSize.width) * 0.5, (svBounds.size.height - editorSize.height) * 0.5, editorSize.width, editorSize.height)];
+	
+	[valueEditor setEditingColumn:latestContent[[tableView clickedRow]]];
+	[sv addSubview:valueEditor];
+}
+
+- (void)closeValueEditor {
+	if (valueEditor) {
+		[valueEditor removeFromSuperview];
+	}
 }
 
 /*
