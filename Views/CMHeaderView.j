@@ -21,7 +21,7 @@
 - (id)initWithFrame:(CGRect)aFrame {
 	self = [super initWithFrame:aFrame];
 	if (self) {
-		backgroundGradient = [[CPGradient alloc] initWithStartingColor:[CPColor colorWithHue:0.597 saturation:0.666 brightness:0.83 alpha:1] endingColor:[CPColor colorWithHue:0.597 saturation:0.666 brightness:0.65 alpha:1]];
+		backgroundGradient = CMHeadingGradient;
 		
 		title = [[CPTextField alloc] initWithFrame:CGRectInset(aFrame, 10, 0)];
 		[title setFont:[CPFont boldSystemFontOfSize:20.0]];
