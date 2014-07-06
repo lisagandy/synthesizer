@@ -16,7 +16,7 @@
 @import "Views/CMHeaderView.j"
 @import "Model/CMColumn.j"
 @import "Model/CMColumnGroup.j"
-/* @import "Model/CMColumnManager.j" */
+@import "Model/CMColumnManager.j"
 
 @implementation AppController : CPObject
 {
@@ -104,27 +104,40 @@
 
 - (void)valuesPostProcessing {
 	var valueArrays = [valuesCSV arrayArray];
-	if ([valueArrays count] == 0) return;
-	
-	var /* CPDictionary */ columnValues = [CPMutableDictionary dictionary];
-	
+	if ([valueArrays count] < 2) return;
+		
 	var /* CPArray */ columnNames = [valueArrays objectAtIndex:0];
-	for (var columnIndex = 0; columnIndex < [columnNames count]; columnIndex++) {
-		var thisColumnValues = [CPMutableArray array];
-		for (var i = 1; i < [valueArrays count]; i++) {
+	var /* CPArray */ spreadsheetNames = [valueArrays objectAtIndex:1];
+	for (var columnIndex = 0; columnIndex < [columnNames count] - 1; columnIndex += 2) {
+		// Get the CMColumn for this value column.
+		var /* CMColumn */ thisColumn = [[CMColumnManager sharedManager] columnWithName:[columnNames objectAtIndex:columnIndex] spreadsheet:[spreadsheetNames objectAtIndex:columnIndex]];
+	
+		// Parse the original and modified values.
+		var thisColumnOriginalValues = [CPMutableArray array];
+		var thisColumnModifiedValues = [CPMutableArray array];
+		for (var i = 2; i < [valueArrays count]; i++) {
 			var /* CPArray */ lineArray = [valueArrays objectAtIndex:i];
+			
+			// Original value for this line.
 			if ([lineArray count] > columnIndex) {
-				[thisColumnValues addObject:[lineArray objectAtIndex:columnIndex]];
+				[thisColumnOriginalValues addObject:lineArray[columnIndex]];
 			}
 			else {
-				[thisColumnValues addObject:@""];
+				[thisColumnOriginalValues addObject:@""];
+			}
+			
+			// Modified value for this line.
+			if ([lineArray count] > columnIndex + 1) {
+				[thisColumnOriginalValues addObject:lineArray[columnIndex + 1]];
+			}
+			else {
+				[thisColumnOriginalValues addObject:@""];
 			}
 		}
 		
-		[columnValues setObject:thisColumnValues forKey:[columnNames objectAtIndex:columnIndex]];
+		[thisColumn setOriginalValues:thisColumnOriginalValues];
+		[thisColumn setModifiedValues:thisColumnModifiedValues];
 	}
-	
-	[[CMColumnManager sharedManager] setColumnValues:columnValues];
 }
 
 - (void)groupingPostProcessing {
