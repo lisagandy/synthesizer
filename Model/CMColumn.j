@@ -18,6 +18,12 @@
 	// The column source spreadsheet.
 	CPString spreadsheet @accessors;
 	
+	// The original values array for this column in the source spreadsheet.
+	CPArray originalValues @accessors;
+	
+	// The modified values array for this column after equalizing the data between different spreadsheets.
+	CPArray modifiedValues @accessors;
+	
 	// A combined lowercase string for search purposes.
 	CPString searchString;
 	
