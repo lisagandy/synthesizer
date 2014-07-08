@@ -70,11 +70,11 @@
 }
 
 - (CPString)description {
-	return [CPString stringWithFormat:@"CMColumn {\n    Name: %@\n    Spreadsheet: %@\n}", name ? name : @"", spreadsheet ? spreadsheet : @""];
+	return [CPString stringWithFormat:@"CMColumn {\n    Name: %@\n    Spreadsheet: %@\n    Values: (%d, %d)\n}", name ? name : @"", spreadsheet ? spreadsheet : @"", [originalValues count], [modifiedValues count]];
 }
 
 - (BOOL)isEqualToColumn:(CMColumn)otherColumn {
-	return [name isEqualToString:[otherColumn name]] && [spreadsheet isEqualToString:[otherColumn spreadsheet]];
+	return ([name caseInsensitiveCompare:[otherColumn name]] == CPOrderedSame) && ([spreadsheet caseInsensitiveCompare:[otherColumn spreadsheet]] == CPOrderedSame);
 }
 
 - (CPComparisonResult)compare:(id)otherObject {
