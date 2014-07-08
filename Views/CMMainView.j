@@ -18,9 +18,7 @@
 	CPScrollView scrollView;
 	CPTableView tableView;
 	CMValueEditingView valueEditor;
-	
-	CGSize minItemSize;
-	
+		
 	CMColumnGroup selectedGroup;
 	
 	// Text typed into the search box that we should use to filter the columns.
@@ -35,8 +33,6 @@
 - (id)initWithFrame:(CGRect)aFrame {
 	self = [super initWithFrame:aFrame];
 	if (self) {
-		minItemSize = CGSizeMake(150, 50);
-	
 		scrollView = [[CPScrollView alloc] initWithFrame:[self bounds]];
 		[scrollView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
 		[scrollView setHasHorizontalScroller:NO];
