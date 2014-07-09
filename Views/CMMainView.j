@@ -148,7 +148,6 @@
 }
 
 - (void)rowDoubleClicked:(id)sender {
-	console.log("clicked " + [self.tableView clickedRow]);
 	var /* CMColumn */ columnClicked = nil;
 	if ([self.tableView clickedRow] < [latestContent count]) {
 		columnClicked = latestContent[[tableView clickedRow]];
