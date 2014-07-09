@@ -12,26 +12,23 @@
 @implementation CMHeaderView : CPView
 {
 	CPMainView mainView @accessors;
-	
-	CPGradient backgroundGradient;
+		
+	CPButton saveButton;
 	CPTextField title;
 	CPSearchField searchField;
 }
 
 - (id)initWithFrame:(CGRect)aFrame {
 	self = [super initWithFrame:aFrame];
-	if (self) {
-		backgroundGradient = CMHeadingGradient;
-		
+	if (self) {		
 		title = [[CPTextField alloc] initWithFrame:CGRectInset(aFrame, 10, 0)];
 		[title setFont:[CPFont boldSystemFontOfSize:20.0]];
-		[title setAutoresizingMask:CPViewHeightSizable | CPViewMaxXMargin];
+		[title setAutoresizingMask:CPViewMinXMargin | CPViewMaxXMargin];
 		[title setAlignment:CPCenterTextAlignment];
 		[title setVerticalAlignment:CPCenterVerticalTextAlignment];
 		[title setTextColor:[CPColor whiteColor]];
 		[title setStringValue:@"Column Merger"];
 		[self addSubview:title];
-
 		
 		searchField = [[ToolbarSearchField alloc] initWithFrame:CGRectMake(aFrame.origin.x + aFrame.size.width - 10 - 140, aFrame.origin.y + 5, 140, 30)];
 		[searchField setAutoresizingMask:CPViewMinXMargin];
@@ -65,13 +62,23 @@
 		[searchField setValue:CGInsetMake(9.0, 14.0, 6.0, 14.0) forThemeAttribute:@"content-inset" inState:CPThemeStateBezeled | CPTextFieldStateRounded | CPThemeStateEditing];
 		
 		[self addSubview:searchField];
+
+		saveButton = [[CPButton alloc] initWithFrame:CGRectMake(5, 5, 60, 34)];
+		[saveButton setBordered:NO];
+		[saveButton setFont:[CPFont systemFontOfSize:18]];
+		[saveButton setTextColor:[CPColor whiteColor]];
+		[saveButton setAutoresizingMask:CPViewMaxXMargin | CPViewMaxYMargin];
+		[saveButton setTitle:"Save"];
+		[saveButton setTarget:self];
+		[saveButton setAction:@selector(save:)];
+		//[self addSubview:saveButton];
 	}
 	return self;
 }
 
 - (void)drawRect:(CGRect)rect {
 	var bounds = [self bounds];
-	[backgroundGradient drawInRect:bounds angle:90];
+	[CMHeadingGradient drawInRect:bounds angle:90];
 	
 	var context = [[CPGraphicsContext currentContext] graphicsPort]; 
 	CGContextSetFillColor(context, [CPColor darkGrayColor]); 
@@ -80,6 +87,26 @@
 
 - (void)filterColumns:(CPSearchField)sender {
 	[mainView setTextFilter:[sender stringValue]];
+}
+
+- (IBAction)save:(CPButton)sender {
+	var uriContent = "data:application/octet-stream;filename=filename.txt," + "test";
+	var myWindow = window.open(uriContent, "filename.txt");
+
+/*
+	var myWindow = window.open("", "MsgWindow", "width=200, height=100");
+	myWindow.document.write("<p>test.</p>");
+*/
+
+/*
+	var savePanel = [CPSavePanel savePanel];
+	var response = [savePanel runModal];
+
+	if (!response) return;
+
+	var saveURL = [savePanel URL];
+	console.log(saveURL);
+*/
 }
 
 @end
