@@ -47,7 +47,7 @@
 		columnNameLabel = [[CPTextField alloc] initWithFrame:CGRectMake(bounds.origin.x + 10., bounds.origin.y, bounds.size.width - 20., headerHeight * 0.6)];
 		[columnNameLabel setFont:[CPFont systemFontOfSize:14.0]];
 		[columnNameLabel setTextColor:[CPColor whiteColor]];
-		[columnNameLabel setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
+		[columnNameLabel setAutoresizingMask:CPViewMaxXMargin | CPViewMaxYMargin];
 		[columnNameLabel setVerticalAlignment:CPBottomVerticalTextAlignment];
 		[self addSubview:columnNameLabel];
 	}
@@ -56,7 +56,7 @@
 		columnSpreadsheetLabel = [[CPTextField alloc] initWithFrame:CGRectMake(bounds.origin.x + 10., bounds.origin.y + (headerHeight * .6), bounds.size.width - 20., headerHeight * .4)];
 		[columnSpreadsheetLabel setFont:[CPFont systemFontOfSize:10.0]];
 		[columnSpreadsheetLabel setTextColor:[CPColor whiteColor]];
-		[columnSpreadsheetLabel setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
+		[columnSpreadsheetLabel setAutoresizingMask:CPViewMaxXMargin | CPViewMaxYMargin];
 		[columnSpreadsheetLabel setVerticalAlignment:CPTopVerticalTextAlignment];
 		[self addSubview:columnSpreadsheetLabel];
 	}
@@ -92,7 +92,8 @@
 		
 		tableColumn = [[CPTableColumn alloc] initWithIdentifier:@"Modified Value"];
 		[tableColumn setWidth:([self bounds].size.width - 10) * 0.5];
-		[[tableColumn headerView] setStringValue:@"Modified Value"];
+		[tableColumn setEditable:YES];
+		[[tableColumn headerView] setStringValue:@"Modified Value (Editable)"];
 		[tableView addTableColumn:tableColumn];
 
 		[scrollView setDocumentView:tableView];
@@ -160,7 +161,7 @@
 }
 
 - (int)numberOfRowsInTableView:(id)tableView {
-    console.log("Num rows: " + MIN([[editingColumn originalValues] count], [[editingColumn modifiedValues] count]));
+/*     console.log("Num rows: " + MIN([[editingColumn originalValues] count], [[editingColumn modifiedValues] count])); */
     return MIN([[editingColumn originalValues] count], [[editingColumn modifiedValues] count]);
 }
 
@@ -171,6 +172,19 @@
         return [[editingColumn modifiedValues] objectAtIndex:aRow];
     else 
     	return "error";
+}
+
+
+- (void)tableView:(CPTableView)aTableView setObjectValue:(id)anObject forTableColumn:(CPTableColumn)aTableColumn row:(CPInteger)aRow {
+/* 	console.log("Column:  " + aTableColumn + "\nRow:  " + aRow + "\nObject:  " + anObject); */
+	if ([aTableColumn identifier] == "Modified Value") {
+		if (aRow < [[editingColumn modifiedValues] count]) {
+			var /* CPMutableArray */ newModifiedValues = [CPMutableArray arrayWithArray:[editingColumn modifiedValues]];
+			[newModifiedValues removeObjectAtIndex:aRow];
+			[newModifiedValues insertObject:anObject atIndex:aRow];
+			[editingColumn setModifiedValues:newModifiedValues];
+		}
+	}
 }
 
 /*
