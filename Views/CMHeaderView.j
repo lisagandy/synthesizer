@@ -14,6 +14,7 @@
 	CPMainView mainView @accessors;
 		
 	CPButton saveButton;
+	CPButton addGroupButton;
 	CPTextField title;
 	CPSearchField searchField;
 }
@@ -63,6 +64,15 @@
 		
 		[self addSubview:searchField];
 
+		addGroupButton = [[CPButton alloc] initWithFrame:CGRectMake(0, 0, aFrame.size.height, aFrame.size.height)];
+		[addGroupButton setBordered:NO];
+		[addGroupButton setAutoresizingMask:CPViewMaxXMargin | CPViewMaxYMargin];
+		[addGroupButton setImage:[[CPImage alloc] initWithContentsOfFile:("Resources/add-group.png") size:CPSizeMake(15, 15)]];
+		[addGroupButton setTarget:self];
+		[addGroupButton setAction:@selector(addGroup:)];
+		[addGroupButton setImagePosition:CPImageOnly];
+		[self addSubview:addGroupButton];
+
 		saveButton = [[CPButton alloc] initWithFrame:CGRectMake(5, 5, 60, 34)];
 		[saveButton setBordered:NO];
 		[saveButton setFont:[CPFont systemFontOfSize:18]];
@@ -107,6 +117,44 @@
 	var saveURL = [savePanel URL];
 	console.log(saveURL);
 */
+}
+
+- (IBAction)addGroup:(CPButton)sender {
+	var /* CPString */ defaultGroupName = @"Untitled Group";
+
+	var /* CPArray */ columnGroups = [[CMColumnManager sharedManager] columnGroups];
+	var /* CPMutableArray */ mutColumnGroups = [CPMutableArray array];
+	if (columnGroups) [mutColumnGroups addObjectsFromArray:columnGroups];
+	
+	var addedGroup = [[CMColumnGroup alloc] initWithName:defaultGroupName];
+	
+	// Check if we need to add a digit to the end of the group name.
+	var maxNumber = 0;
+	for (var i = 0; i < [mutColumnGroups count]; i++) {
+		var /* CMColumnGroup */ group = mutColumnGroups[i];
+		var /* CPString */ groupName = [group name];
+		
+		if ([groupName hasPrefix:defaultGroupName]) {
+			var groupNumber = 1;
+			if ([groupName length] > [defaultGroupName length]) {
+				// A number is appended to this name.  Check to see what the number is so we can compare it to our max.
+				var /* CPString */ numberString = [groupName substringFromIndex:[defaultGroupName length] + 1];
+				var /* CPInteger */ numberStringIntValue = [numberString intValue];
+				if (numberStringIntValue > 1) groupNumber = numberStringIntValue;
+			}
+			
+			if (groupNumber > maxNumber) {
+				maxNumber = groupNumber;
+			}
+		}
+	}
+	
+	if (maxNumber > 0) {
+		[addedGroup setName:[defaultGroupName stringByAppendingFormat:@" %d", maxNumber + 1]];
+	}
+	
+	[mutColumnGroups addObject:addedGroup];
+	[[CMColumnManager sharedManager] setColumnGroups:mutColumnGroups];
 }
 
 @end

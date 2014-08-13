@@ -20,6 +20,8 @@ var CMColumnManager_sharedManager = nil;
 
 	// An array of CMColumnGroup objects.  These show up in the sidebar.
 	CPArray columnGroups @accessors;
+	
+	CPView sidebarView @accessors;
 }
 
 + (CMColumnManager)sharedManager {
@@ -102,11 +104,22 @@ var CMColumnManager_sharedManager = nil;
 			[normalGroups addObject:group];
 		}
 	}
+	
+	// Check if there are any columns that are in groups no longer a part of normalGroups.  If so, then we need to set those column groups to nil.
+	for (var i = 0; i < [columns count]; i++) {
+		var /* CPColumn */ col = [columns objectAtIndex:i];
+		if (![normalGroups containsObject:[col group]]) {
+			[col setGroup:nil];
+		}
+	}
 
 	[normalGroups sortUsingSelector:@selector(compare:)];
 	[normalGroups insertObject:soloGroup atIndex:0];
 	[normalGroups insertObject:allGroup atIndex:0];
 	columnGroups = normalGroups;
+	
+	// Tell the UI to update.
+	[sidebarView updateContent];
 }
 
 @end

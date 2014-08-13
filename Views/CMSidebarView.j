@@ -95,15 +95,17 @@
 - (void)tableViewSelectionDidChange:(CPNotification)aNotification {
 	var selectedIndex = [tableView selectedRow];
 	
-	if (selectedIndex < [content count]) {
+	if ((selectedIndex >= 0) && (selectedIndex < [content count])) {
 		[mainView setSelectedGroup:[content objectAtIndex:selectedIndex]];
+	}
+	else {
+		[tableView selectRowIndexes:[CPIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
 	}
 }
 
 - (void)tableView:(CPTableView)aTableView willDisplayView:(CPView)aView forTableColumn:(CPTableColumn)aTableColumn row:(CPInteger)aRowIndex {
 	[aView setSelected:(aRowIndex == [aTableView selectedRow])];
 }
-
 
 - (BOOL)tableView:(CPTableView)aTableView acceptDrop:(id)draggingInfo row:(CPInteger)aRowIndex dropOperation:(CPTableViewDropOperation)anOperation {
 	if (anOperation == CPTableViewDropOn) {
@@ -131,6 +133,10 @@
 	}
 	
 	return CPDragOperationNone;
+}
+
+- (BOOL)tableView:(CPTableView)aTableView shouldEditTableColumn:(CPTableColumn)aTableColumn row:(CPInteger)rowIndex {
+	console.log("Should edit: " + rowIndex);
 }
 
 - (void)observeValueForKeyPath:(CPString)keyPath ofObject:(id)object change:(CPDictionary)change context:(void)context {

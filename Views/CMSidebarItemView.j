@@ -19,10 +19,13 @@
 */
 	CPTextField label;
 	CPTextField countLabel;
+	CPButton deleteGroupButton;
 	
 	BOOL selected @accessors;
 	CPGradient selectedGradient;
 	CPGradient deselectedGradient;
+	
+	CMColumnGroup representedGroup;
 }
 
 - (id)initWithFrame:(CGRect)aFrame {
@@ -47,6 +50,7 @@
 		deselectedGradient = [[CPGradient alloc] initWithStartingColor:[CPColor colorWithWhite:0.92 alpha:1] endingColor:[CPColor colorWithWhite:1 alpha:1]];
 		label = [aCoder decodeObjectForKey:@"Label"];
 		countLabel = [aCoder decodeObjectForKey:@"CountLabel"];
+		deleteGroupButton = [aCoder decodeObjectForKey:@"DeleteGroupButton"];
 	}
 	return self;
 }
@@ -55,6 +59,7 @@
 	[super encodeWithCoder:aCoder];
 	[aCoder encodeConditionalObject:label forKey:@"Label"];
 	[aCoder encodeConditionalObject:countLabel forKey:@"CountLabel"];
+	[aCoder encodeConditionalObject:deleteGroupButton forKey:@"DeleteGroupButton"];
 }
 
 - (void)setSelected:(BOOL)isSelected {
@@ -70,6 +75,11 @@
 
 	// Below in setRepresentedObject, we might have a 0 bounds, so reposition the counter label here so it shows up in the correct spot.
 	[countLabel setFrame:CGRectMake(bounds.origin.x + bounds.size.width - 10. - 30., bounds.origin.y, 30., bounds.size.height)];
+
+	// Set hidden depending on selection.
+	var showDelete = selected && ![representedGroup allGroup] && ![representedGroup soloGroup];
+	[countLabel setHidden:showDelete];
+	[deleteGroupButton setHidden:!showDelete];
 
 	if (selected) {
 		[selectedGradient drawInRect:bounds angle:0];
@@ -95,6 +105,11 @@
 
 - (void)setRepresentedObject:(id)anObject {
 	// anObject is of type CMColumnGroup.
+	if ([anObject isKindOfClass:[CMColumnGroup class]]) {
+		representedGroup = anObject;
+	}
+	
+	var bounds = [self bounds];
 	if (!label) {
 		label = [[CPTextField alloc] initWithFrame:CGRectInset([self bounds], 10.0, 0)];
 		[label setFont:[CPFont boldSystemFontOfSize:14.0]];
@@ -104,7 +119,6 @@
 	}
 	
 	if (!countLabel) {
-		var bounds = [self bounds];
 		countLabel = [[CPTextField alloc] initWithFrame:CGRectMake(bounds.origin.x + bounds.size.width - 10. - 30., bounds.origin.y, 30., bounds.size.height)];
 		[countLabel setFont:[CPFont systemFontOfSize:11.0]];
 		[countLabel setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable | CPViewMinXMargin];
@@ -113,10 +127,22 @@
 		[countLabel setTextColor:[CPColor grayColor]];
 		[self addSubview:countLabel];
 	}
+	
+	if (!deleteGroupButton) {
+		deleteGroupButton = [[CPButton alloc] initWithFrame:CGRectMake(bounds.origin.x + bounds.size.width - 10 - 22, bounds.origin.y + 0.5 * (bounds.size.height - 15), 15, 15)];
+		[deleteGroupButton setBordered:NO];
+		[deleteGroupButton setAutoresizingMask:CPViewMinXMargin | CPViewMinYMargin | CPViewMaxYMargin];
+		[deleteGroupButton setImage:[[CPImage alloc] initWithContentsOfFile:("Resources/delete-group.png") size:CPSizeMake(15, 15)]];
+		[deleteGroupButton setTarget:self];
+		[deleteGroupButton setAction:@selector(deleteGroup:)];
+		[deleteGroupButton setImagePosition:CPImageOnly];
+		[self addSubview:deleteGroupButton];
+	}
 
 	[label setStringValue:[anObject name]];
 	var memberCount = [[[CMColumnManager sharedManager] columnsInGroup:anObject] count];
 	[countLabel setStringValue:(memberCount > 0) ? [CPString stringWithFormat:@"%d", memberCount] : @""];
+console.log(@"here" + memberCount);
 
 /*
 	if (!_imageView) {
@@ -130,6 +156,16 @@
 	
 	[_imageView setImage:anObject];
 */
+}
+
+- (IBAction)deleteGroup:(CPButton)sender {
+	var /* CPArray */ columnGroups = [[CMColumnManager sharedManager] columnGroups];
+	var /* CPMutableArray */ mutColumnGroups = [CPMutableArray array];
+	if (columnGroups) [mutColumnGroups addObjectsFromArray:columnGroups];
+
+	[mutColumnGroups removeObject:representedGroup];
+	
+	[[CMColumnManager sharedManager] setColumnGroups:mutColumnGroups];
 }
 
 

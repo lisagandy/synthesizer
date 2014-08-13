@@ -74,6 +74,8 @@
 	[splitView setBackgroundColor:[CPColor darkGrayColor]];
 	[splitView setAutoresizingMask:CPViewMaxXMargin | CPViewHeightSizable];
 	
+	[[CMColumnManager sharedManager] setSidebarView:sidebarView];
+	
 	[headerView setMainView:mainView];
 	[sidebarView setMainView:mainView];
 	
@@ -209,9 +211,6 @@
 	
 	[[CMColumnManager sharedManager] setColumnGroups:groupArray ? groupArray : [CPArray array]];
 	[[CMColumnManager sharedManager] setColumns:columns ? columns : [CPArray array]];
-	
-	// Tell the UI to update.
-	[sidebarView updateContent];
 }
 
 @end
