@@ -85,4 +85,28 @@ var CMColumnManager_sharedManager = nil;
 	return [self columnMatchingExternalColumn:searchColumn];
 }
 
+- (void)setColumnGroups:(CPArray)aGroupArray {
+	var normalGroups = [CPMutableArray array];
+	var /* CPColumnGroup */ allGroup = nil;
+	var /* CPColumnGroup */ soloGroup = nil;
+	
+	for (var i = 0; i < [aGroupArray count]; i++) {
+		var /* CPColumnGroup */ group = aGroupArray[i];
+		if ([group allGroup]) {
+			allGroup = group;
+		}
+		else if ([group soloGroup]) {
+			soloGroup = group;
+		}
+		else {
+			[normalGroups addObject:group];
+		}
+	}
+
+	[normalGroups sortUsingSelector:@selector(compare:)];
+	[normalGroups insertObject:soloGroup atIndex:0];
+	[normalGroups insertObject:allGroup atIndex:0];
+	columnGroups = normalGroups;
+}
+
 @end

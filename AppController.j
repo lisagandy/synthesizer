@@ -103,7 +103,7 @@
 	[allGroup setAllGroup:YES];
 	
 	// Setup the Solo group.
-	var soloGroup = [[CMColumnGroup alloc] initWithName:@"Solo"];
+	var soloGroup = [[CMColumnGroup alloc] initWithName:@"Not Grouped"];
 	[soloGroup setSoloGroup:YES];
 
 	// Get our value arrays from the parsed CSV file.	
@@ -202,14 +202,10 @@
 	// Sort the columns
 	[columns sortUsingSelector:@selector(compare:)];
 	
-	// Sort the groups
+	// Combine the groups
 	var groupArray = [CPMutableArray arrayWithObjects:allGroup, soloGroup, nil];
 	var parsedGroups = [groups allValues];
-	if (parsedGroups) {
-		var sortedArray = [parsedGroups mutableCopy];
-		[sortedArray sortUsingSelector:@selector(compare:)];
-		[groupArray addObjectsFromArray:sortedArray];
-	}
+	if (parsedGroups) [groupArray addObjectsFromArray:parsedGroups];
 	
 	[[CMColumnManager sharedManager] setColumnGroups:groupArray ? groupArray : [CPArray array]];
 	[[CMColumnManager sharedManager] setColumns:columns ? columns : [CPArray array]];
