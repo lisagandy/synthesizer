@@ -143,19 +143,6 @@
 	var memberCount = [[[CMColumnManager sharedManager] columnsInGroup:anObject] count];
 	[countLabel setStringValue:(memberCount > 0) ? [CPString stringWithFormat:@"%d", memberCount] : @""];
 console.log(@"here" + memberCount);
-
-/*
-	if (!_imageView) {
-		_imageView = [[CPImageView alloc] initWithFrame:CGRectInset([self bounds], 5.0, 5.0)];
-		
-		[_imageView setImageScaling:CPScaleProportionally];
-		[_imageView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
-		
-		[self addSubview:_imageView];
-	}
-	
-	[_imageView setImage:anObject];
-*/
 }
 
 - (IBAction)deleteGroup:(CPButton)sender {

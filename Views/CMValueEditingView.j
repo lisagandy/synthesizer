@@ -141,19 +141,6 @@
 	[[CPColor darkGrayColor] set];
 	CGContextSetLineWidth(context, 2);
 	CGContextStrokePath(context);
-
-/*
-	[[CPColor darkGrayColor] set];
-	[bp stroke];
-*/
-	
-/*
-	[backgroundGradient drawInRect:bounds angle:90];
-	
-	var context = [[CPGraphicsContext currentContext] graphicsPort]; 
-	CGContextSetFillColor(context, [CPColor darkGrayColor]); 
-	CGContextFillRect(context, CGRectMake(bounds.origin.x, bounds.origin.y + bounds.size.height - 1, bounds.size.width, 1)); 
-*/
 }
 
 - (IBAction)done:(id)sender {
@@ -186,22 +173,5 @@
 		}
 	}
 }
-
-/*
-- (void)tableView:(CPTableView)tableView setObjectValue:(id)aValue forTableColumn:(CPTableColumn)tableColumn row:(CPInteger)aRow {
-    var name = [tableColumn identifier];
-
-    switch (name)
-    {
-        case "Current":
-        {
-            rowEdits[aRow].unshift(rowData[aRow]);
-            rowEdits[aRow].pop;
-            rowData[aRow] = aValue;
-            break;
-        }
-    }
-}
-*/
 
 @end
