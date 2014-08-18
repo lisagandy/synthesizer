@@ -115,6 +115,9 @@
 		[label setFont:[CPFont boldSystemFontOfSize:14.0]];
 		[label setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
 		[label setVerticalAlignment:CPCenterVerticalTextAlignment];
+		[label setEditable:YES];
+		[label setValue:[CPColor clearColor] forThemeAttribute:@"bezel-color" inState:CPThemeStateEditing];
+		[label setDelegate:self];
 		[self addSubview:label];
 	}
 	
@@ -142,7 +145,6 @@
 	[label setStringValue:[anObject name]];
 	var memberCount = [[[CMColumnManager sharedManager] columnsInGroup:anObject] count];
 	[countLabel setStringValue:(memberCount > 0) ? [CPString stringWithFormat:@"%d", memberCount] : @""];
-console.log(@"here" + memberCount);
 }
 
 - (IBAction)deleteGroup:(CPButton)sender {
@@ -179,5 +181,20 @@ console.log(@"here" + memberCount);
 	[self setBackgroundColor:[CPColor yellowColor]];
 }
 */
+
+// CPTextField delegate
+- (void)controlTextDidFocus:(CPNotification)sender {
+	var /* CPTextField */ notificationObject = [sender object];
+	[notificationObject selectText:self];
+}
+
+- (void)controlTextDidEndEditing:(CPNotification)sender {
+	var /* CPTextField */ notificationObject = [sender object];
+	var /* CPString */ modifiedGroupName = [notificationObject stringValue];
+	
+	[representedGroup setName:modifiedGroupName];
+	var /* CMColumnManager */ columnManager = [CMColumnManager sharedManager];
+	[columnManager setColumnGroups:[columnManager columnGroups]];		// Forces the sidebar to update.
+}
 
 @end
