@@ -155,6 +155,12 @@
 	
 	[mutColumnGroups addObject:addedGroup];
 	[[CMColumnManager sharedManager] setColumnGroups:mutColumnGroups];
+	
+	// Scroll the table view to the new group and highlight it.
+	var /* CMSidebarView */ sidebarView = [[CMColumnManager sharedManager] sidebarView];
+	var /* CPInteger */ addedGroupIndex = [[[CMColumnManager sharedManager] columnGroups] indexOfObject:addedGroup];
+	[[sidebarView tableView] scrollRowToVisible:addedGroupIndex];
+	[[sidebarView tableView] selectRowIndexes:[CPIndexSet indexSetWithIndex:addedGroupIndex] byExtendingSelection:NO];
 }
 
 @end
