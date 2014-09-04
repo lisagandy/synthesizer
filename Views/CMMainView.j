@@ -10,7 +10,6 @@
 @import <AppKit/AppKit.j>
 @import "CMMainItemView.j"
 @import "../Model/CMColumnManager.j"
-@import "../Base/CMScroller.j"
 @import "CMValueEditingView.j"
 
 @implementation CMMainView : CPView
