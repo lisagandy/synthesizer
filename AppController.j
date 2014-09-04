@@ -209,8 +209,8 @@
 	var parsedGroups = [groups allValues];
 	if (parsedGroups) [groupArray addObjectsFromArray:parsedGroups];
 	
-	[[CMColumnManager sharedManager] setColumnGroups:groupArray ? groupArray : [CPArray array]];
 	[[CMColumnManager sharedManager] setColumns:columns ? columns : [CPArray array]];
+	[[CMColumnManager sharedManager] setColumnGroups:groupArray ? groupArray : [CPArray array]];
 }
 
 @end
