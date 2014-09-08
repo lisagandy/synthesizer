@@ -58,7 +58,10 @@
 	var lineDelimiter = @"\n\r";
 	if ([csv rangeOfString:lineDelimiter].location == CPNotFound) {
 		// Check if we should just us \n or \r.
-		if ([csv rangeOfString:@"\n"].location != CPNotFound) {
+		if ([csv rangeOfString:@"\r\n"].location != CPNotFound) {
+			lineDelimiter = @"\r\n";
+		}
+		else if ([csv rangeOfString:@"\n"].location != CPNotFound) {
 			lineDelimiter = @"\n";
 		}
 		else if ([csv rangeOfString:@"\r"].location != CPNotFound) {
@@ -185,10 +188,10 @@
 		var /* CPArray */ columns = lines[lineIndex];
 		var columnCount = [columns count];
 		for (var columnIndex = 0; columnIndex < columnCount; columnIndex++) {
-			output += [self stringForColumnValue:columns[columnIndex]];
+			output += [self stringForColumnValue:[columns objectAtIndex:columnIndex]];
 			if (columnIndex < columnCount - 1) output += ",";
 		}
-		output += "\n\r";
+		output += '\r\n';
 	}
 	return output;
 }
@@ -196,17 +199,7 @@
 - (CPString)stringForColumnValue:(CPString)value {
 	// This is where we want to double " characters and insert surrounding quotes if we have special characters in the value.
 	var /* CPString */ result = value.replace(/"/g, '""');
-	var /* bool */ needSurroundingQuotes = false;
-	if (value.indexOf('"') != -1) {
-		needSurroundingQuotes = true;
-	}
-	else if (value.indexOf(',') != -1) {
-		needSurroundingQuotes = true;
-	}
-	
-	if (needSurroundingQuotes) {
-		result = '"' + result + '"';
-	}
+	result = '"' + result + '"';
 	
 	return result;
 }

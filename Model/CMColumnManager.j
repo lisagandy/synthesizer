@@ -255,7 +255,7 @@ var CMColumnManager_sharedManager = nil;
 	// Create the column order.  Columns should be ordered by group name first, and then solo columns at the end.
 	var orderedColumns = [CPMutableArray array];
 	for (var groupIndex = 0; groupIndex < [columnGroups count]; groupIndex++) {
-		var /* CMColumnGroup */ group = columnGroups[groupIndex];
+		var /* CMColumnGroup */ group = [columnGroups objectAtIndex:groupIndex];
 		var /* CPArray[CMColumn] */ groupColumns = [self columnsInGroup:group];
 		if (groupColumns) [orderedColumns addObjectsFromArray:groupColumns];
 	}
@@ -265,6 +265,7 @@ var CMColumnManager_sharedManager = nil;
 	// Check to make sure every column has a name.  Remove any column from our export that doesn't have a name set.
 	var namelessColumns = [CPMutableArray array];
 	for (var index = 0; index < [orderedColumns count]; index++) {
+		var /* CMColumn */ column = [orderedColumns objectAtIndex:index];
 		if ([[column name] length] == 0) {
 			[namelessColumns addObject:column];
 		}
@@ -277,9 +278,9 @@ var CMColumnManager_sharedManager = nil;
 	// Generate the first row, which are the column names (both original and modified group names).
 	var /* CPArray[CPString] */ firstRow = [CPMutableArray array];
 	for (var index = 0; index < orderedColumnCount; index++) {
-		var /* CMColumn */ column = orderedColumns[index];
+		var /* CMColumn */ column = [orderedColumns objectAtIndex:index];
 		[firstRow addObject:[column name]];
-		[firstRow addObject:[column groupName] ? [column groupName] : [column name]];
+		[firstRow addObject:[[column group] name] ? [[column group] name] : [column name]];
 		
 		// Find our max value count.
 		var columnOriginalValueCount = [[column originalValues] count];
@@ -292,8 +293,8 @@ var CMColumnManager_sharedManager = nil;
 	// Print the second row, which marks which spreadsheet the column is from.
 	var /* CPArray[CPString] */ secondRow = [CPMutableArray array];
 	for (var index = 0; index < orderedColumnCount; index++) {
-		var /* CMColumn */ column = orderedColumns[index];
-		[secondRow addObject:[column spreadsheetName] ? [column spreadsheetName] : @""];
+		var /* CMColumn */ column = [orderedColumns objectAtIndex:index];
+		[secondRow addObject:[column spreadsheet] ? [column spreadsheet] : @""];
 		[secondRow addObject:@""];
 	}
 	[lines addObject:secondRow];
@@ -302,24 +303,25 @@ var CMColumnManager_sharedManager = nil;
 	for (var valueIndex = 0; valueIndex < maxValueCount; valueIndex++) {
 		var /* CPArray[CPString] */ line = [CPMutableArray array];
 		for (var columnIndex = 0; columnIndex < orderedColumnCount; columnIndex++) {
-			var /* CMColumn */ column = orderedColumns[index];
+			var /* CMColumn */ column = [orderedColumns objectAtIndex:columnIndex];
 			var /* CPArray[CPString] */ originalValues = [column originalValues];
 			var /* CPArray[CPString] */ modifiedValues = [column modifiedValues];
 			
 			if (valueIndex < [originalValues count]) {
-				[line addObject:originalValues[valueIndex]];
+				[line addObject:[originalValues objectAtIndex:valueIndex]];
 			}
 			else {
 				[line addObject:@""];
 			}
 			
 			if (valueIndex < [modifiedValues count]) {
-				[line addObject:modifiedValues[valueIndex]];
+				[line addObject:[modifiedValues objectAtIndex:valueIndex]];
 			}
 			else {
 				[line addObject:@""];
 			}
 		}
+		[lines addObject:line];
 	}
 	
 	var csv = [[CMCSV alloc] init];
