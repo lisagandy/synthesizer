@@ -2,8 +2,8 @@
  * CMCSV.j
  * ColumnMerger
  *
- * Created by Mike Piatek-Jimenez on April 30, 2014.
- * Copyright 2013, Gaucho Software, LLC.  All rights reserved.
+ * Created by Mike Piatek-Jimenez.
+ * Copyright 2014, Gaucho Software, LLC.  All rights reserved.
  *
  * This class will parse a CSV file exported from Excel.  The delimiters are commas (,).  
  * Fields that contain a comma are surrounded by double-quotes (").  

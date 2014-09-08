@@ -2,8 +2,11 @@
  * CMSidebarItemView.j
  * ColumnMerger
  *
- * Created by Mike Piatek-Jimenez on November 28, 2013.
- * Copyright 2013, Gaucho Software, LLC.  All rights reserved.
+ * Created by Mike Piatek-Jimenez.
+ * Copyright 2014, Gaucho Software, LLC.  All rights reserved.
+ *
+ * This view shows content for a single row of the sidebar (listing
+ * column groups).  It handles events like renaming and deleting groups.
  */
 
 @import <Foundation/Foundation.j>

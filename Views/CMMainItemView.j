@@ -2,8 +2,12 @@
  * CMMainItemView.j
  * ColumnMerger
  *
- * Created by Mike Piatek-Jimenez on April 30, 2014.
- * Copyright 2013, Gaucho Software, LLC.  All rights reserved.
+ * Created by Mike Piatek-Jimenez.
+ * Copyright 2014, Gaucho Software, LLC.  All rights reserved.
+ *
+ * This view presents the content for each table row in the main table that 
+ * shows the column list.  Each row is a separate instance of this class.  
+ * The table itself is managed from CMMainView.
  */
 
 @import <Foundation/Foundation.j>

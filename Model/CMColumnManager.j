@@ -2,8 +2,13 @@
  * CMColumnManager.j
  * ColumnMerger
  *
- * Created by Mike Piatek-Jimenez on April 25, 2014.
+ * Created by Mike Piatek-Jimenez.
  * Copyright 2014, Gaucho Software, LLC.  All rights reserved.
+ *
+ * This class is meant to be used as a singleton.  It keeps track of all
+ * the spreadsheet columns that were imported, as well as a list of column
+ * groups.  The column manager has convenience methods to fetch the list 
+ * of columns that belong to a certain group, or no particular group.  
  */
 
 @import <Foundation/Foundation.j>

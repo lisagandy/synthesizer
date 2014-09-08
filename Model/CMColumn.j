@@ -2,8 +2,12 @@
  * CMColumn.j
  * ColumnMerger
  *
- * Created by Mike Piatek-Jimenez on April 25, 2014.
+ * Created by Mike Piatek-Jimenez.
  * Copyright 2014, Gaucho Software, LLC.  All rights reserved.
+ *
+ * A CMColumn object represents a column from one of the source spreadsheets.  
+ * The object also stores the original and modified values of the column, as 
+ * well as a reference to the group the column belongs to.
  */
 
 @import <Foundation/Foundation.j>

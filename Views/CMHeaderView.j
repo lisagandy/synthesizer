@@ -2,8 +2,13 @@
  * CMHeaderView.j
  * ColumnMerger
  *
- * Created by Mike Piatek-Jimenez on April 29, 2014.
+ * Created by Mike Piatek-Jimenez.
  * Copyright 2014, Gaucho Software, LLC.  All rights reserved.
+ *
+ * This class represents the view that acts as the page header: a blue 
+ * bar with button actions and a search box.  It sets up the interface
+ * in the header as well as serves as the target object when events 
+ * originating from the header take place. 
  */
 
 @import <Foundation/Foundation.j>
