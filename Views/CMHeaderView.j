@@ -18,10 +18,10 @@
 {
 	CPMainView mainView @accessors;
 		
-	CPButton saveButton;
 	CPButton addGroupButton;
 	CPTextField title;
 	CPSearchField searchField;
+	CPButton saveButton;
 }
 
 - (id)initWithFrame:(CGRect)aFrame {
@@ -36,7 +36,7 @@
 		[title setStringValue:@"Column Merger"];
 		[self addSubview:title];
 		
-		searchField = [[ToolbarSearchField alloc] initWithFrame:CGRectMake(aFrame.origin.x + aFrame.size.width - 10 - 140, aFrame.origin.y + 5, 140, 30)];
+		searchField = [[ToolbarSearchField alloc] initWithFrame:CGRectMake(aFrame.origin.x + aFrame.size.width - 10 - 140 - 60 - 10, aFrame.origin.y + 5, 140, 30)];
 		[searchField setAutoresizingMask:CPViewMinXMargin];
 		[searchField setTarget:self];
 		[searchField setAction:@selector(filterColumns:)];
@@ -78,15 +78,15 @@
 		[addGroupButton setImagePosition:CPImageOnly];
 		[self addSubview:addGroupButton];
 
-		saveButton = [[CPButton alloc] initWithFrame:CGRectMake(5, 5, 60, 34)];
+		saveButton = [[CPButton alloc] initWithFrame:CGRectMake(aFrame.origin.x + aFrame.size.width - 10 - 60, 4, 60, 34)];
 		[saveButton setBordered:NO];
 		[saveButton setFont:[CPFont systemFontOfSize:18]];
 		[saveButton setTextColor:[CPColor whiteColor]];
-		[saveButton setAutoresizingMask:CPViewMaxXMargin | CPViewMaxYMargin];
-		[saveButton setTitle:"Save"];
+		[saveButton setAutoresizingMask:CPViewMinXMargin | CPViewMaxYMargin];
+		[saveButton setTitle:"Done"];
 		[saveButton setTarget:self];
 		[saveButton setAction:@selector(save:)];
-		//[self addSubview:saveButton];
+		[self addSubview:saveButton];
 	}
 	return self;
 }
@@ -105,8 +105,12 @@
 }
 
 - (IBAction)save:(CPButton)sender {
-	var uriContent = "data:application/octet-stream;filename=filename.txt," + "test";
+	var /* CMCSV */ csv = [[CMColumnManager sharedManager] exportCSV];
+	console.log([csv exportCSV]);
+/*
+	var uriContent = "data:application/octet-stream;filename=filename.txt," + [csv exportCSV];
 	var myWindow = window.open(uriContent, "filename.txt");
+*/
 
 /*
 	var myWindow = window.open("", "MsgWindow", "width=200, height=100");

@@ -8,7 +8,11 @@
  * This class will parse a CSV file exported from Excel.  The delimiters are commas (,).  
  * Fields that contain a comma are surrounded by double-quotes (").  
  * Fields that contain a double-quote are also surrounded by double-quotes.
+ * Double-quotes within a field value are duplicated (" in the data becomes "" in the CSV).
  * The results are placed in the CPArray lines object.  Values are CPArray objects with each column parsed out.
+ *
+ * When parsing CSV text to an array of lines, parseCSV should be used.
+ * When going the other way around and creating a CSV file from a lines array, use exportCSV.
  */
 
 @import <Foundation/Foundation.j>
@@ -20,10 +24,10 @@
 	CPArray lines @accessors;
 }
 
-- (id)initWithCSVText:(CPString)csv {
+- (id)init {
 	self = [super init];
 	if (self) {
-		[self parse:csv];
+		lines = @[];  // An empty array by default.
 	}
 	return self;
 }
@@ -47,14 +51,17 @@
 // "foo"
 // becomes...
 // """foo"""
-- (void)parse:(CPString)csv {	
+- (void)parseCSV:(CPString)csv {	
 	var parsedLines = [CPMutableArray array];
 
 	// Figure out what our line delimiter should be.  Excel exports seem to have a "\r" delimiter, but we also want to support \n and \n\r.
 	var lineDelimiter = @"\n\r";
 	if ([csv rangeOfString:lineDelimiter].location == CPNotFound) {
 		// Check if we should just us \n or \r.
-		if ([csv rangeOfString:@"\n"].location != CPNotFound) {
+		if ([csv rangeOfString:@"\r\n"].location != CPNotFound) {
+			lineDelimiter = @"\r\n";
+		}
+		else if ([csv rangeOfString:@"\n"].location != CPNotFound) {
 			lineDelimiter = @"\n";
 		}
 		else if ([csv rangeOfString:@"\r"].location != CPNotFound) {
@@ -173,9 +180,28 @@
 	return retArray;
 }
 
-- (CPArray)arrayArray {
-	// Return an array of arrays.  Second level are columns on each line.
-	return lines;
+// Export CSV text as a string using the lines array of arrays (documented above).
+- (CPString)exportCSV {
+	var /* CPString */ output = @"";
+	var lineCount = [lines count];
+	for (var lineIndex = 0; lineIndex < lineCount; lineIndex++) {
+		var /* CPArray */ columns = lines[lineIndex];
+		var columnCount = [columns count];
+		for (var columnIndex = 0; columnIndex < columnCount; columnIndex++) {
+			output += [self stringForColumnValue:[columns objectAtIndex:columnIndex]];
+			if (columnIndex < columnCount - 1) output += ",";
+		}
+		output += '\r\n';
+	}
+	return output;
+}
+
+- (CPString)stringForColumnValue:(CPString)value {
+	// This is where we want to double " characters and insert surrounding quotes if we have special characters in the value.
+	var /* CPString */ result = value.replace(/"/g, '""');
+	result = '"' + result + '"';
+	
+	return result;
 }
 
 @end
