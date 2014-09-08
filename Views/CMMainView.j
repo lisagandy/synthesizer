@@ -2,8 +2,14 @@
  * CMMainView.j
  * ColumnMerger
  *
- * Created by Mike Piatek-Jimenez on November 28, 2013.
- * Copyright 2013, Gaucho Software, LLC.  All rights reserved.
+ * Created by Mike Piatek-Jimenez.
+ * Copyright 2014, Gaucho Software, LLC.  All rights reserved.
+ *
+ * This view handles drawing for the main column list content area.  It configures a
+ * table view to display the data (acting as a data source for the table), 
+ * and handles actions like dragging columns to the sidebar (to add them to
+ * groups) and other events like changing selection and double-clicking a
+ * column to edit the values. 
  */
 
 @import <Foundation/Foundation.j>

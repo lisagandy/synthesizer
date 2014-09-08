@@ -2,8 +2,12 @@
  * CMSidebarView.j
  * ColumnMerger
  *
- * Created by Mike Piatek-Jimenez on November 28, 2013.
- * Copyright 2013, Gaucho Software, LLC.  All rights reserved.
+ * Created by Mike Piatek-Jimenez.
+ * Copyright 2014, Gaucho Software, LLC.  All rights reserved.
+ *
+ * This view handles drawing for the entire sidebar.  It presents (and serves
+ * as a datasource) a table that shows the column groups.  Events like selecting 
+ * a group to display column members are handled here.
  */
 
 @import <Foundation/Foundation.j>

@@ -2,8 +2,10 @@
  * CMCommon.j
  * ColumnMerger
  *
- * Created by Mike Piatek-Jimenez on November 28, 2013.
- * Copyright 2013, Gaucho Software, LLC.  All rights reserved.
+ * Created by Mike Piatek-Jimenez.
+ * Copyright 2014, Gaucho Software, LLC.  All rights reserved.
+ *
+ * This isn't a class, it just provides a few common global variables that several of the other classes use.
  */
 
 // Notifications

@@ -2,8 +2,12 @@
  * CMURL.j
  * ColumnMerger
  *
- * Created by Mike Piatek-Jimenez on November 28, 2013.
- * Copyright 2013, Gaucho Software, LLC.  All rights reserved.
+ * Created by Mike Piatek-Jimenez.
+ * Copyright 2014, Gaucho Software, LLC.  All rights reserved.
+ *
+ * This class handles loading content from a remote URL.  Once the content 
+ * has finished loading, the specified completionNotificationName is posted 
+ * and observers can pick up the data.
  */
 
 @import <Foundation/Foundation.j>

@@ -2,8 +2,12 @@
  * CMHeaderView.j
  * ColumnMerger
  *
- * Created by Mike Piatek-Jimenez on April 29, 2014.
+ * Created by Mike Piatek-Jimenez.
  * Copyright 2014, Gaucho Software, LLC.  All rights reserved.
+ *
+ * This view is shown when a column row in the main table is double-clicked.  
+ * It provides a method for editing the values of that column so they match 
+ * values in equivalent columns from other spreadsheets.
  */
 
 @import <Foundation/Foundation.j>
