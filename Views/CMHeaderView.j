@@ -106,16 +106,35 @@
 
 - (IBAction)save:(CPButton)sender {
 	var /* CMCSV */ csv = [[CMColumnManager sharedManager] exportCSV];
-	console.log([csv exportCSV]);
+	var /* CPString */ csvText = [csv exportCSV];
+
+//	var /* CPString */ boundary = "----------ColumnMergerBoundary";
+//	var /* CPString */ httpBody = [CPString stringWithFormat:@"%@\r\nContent-Disposition: form-data; name=\"csv\"; filename=\"MergedColumns.csv\"\r\nContent-Type: plain/text\r\n\r\n%@\r\n%@", boundary, csvText, boundary];
+//
+//	var /* CPURLRequest */ request = [[CPURLRequest alloc] initWithURL:[CPURL URLWithString:@"/cgi-bin/columnmerger-download.cgi"]];
+//	[request setHTTPMethod:@"POST"];
+//	[request setValue:[CPString stringWithFormat:@"multipart/form-data;boundary=%@", boundary] forHTTPHeaderField:@"Content-type"];
+//	[request setHTTPBody:httpBody];
+//	
+//	[[CPURLConnection alloc] initWithRequest:request delegate:self];
+//	[request release];
+
 /*
 	var uriContent = "data:application/octet-stream;filename=filename.txt," + [csv exportCSV];
 	var myWindow = window.open(uriContent, "filename.txt");
 */
 
 /*
-	var myWindow = window.open("", "MsgWindow", "width=200, height=100");
-	myWindow.document.write("<p>test.</p>");
+	var pom = document.createElement('a');
+	pom.setAttribute('href', "data:application/octet-stream;charset=utf-8," + encodeURIComponent(csvText));
+	pom.setAttribute('download', "MergedColumns.csv");
+	pom.click();
 */
+
+
+	var myWindow = window.open("", "MsgWindow", "width=300, height=200");
+	myWindow.document.write("<form id='downloadForm' method='POST' action='/cgi-bin/columnmerger-download.cgi'><input type='hidden' name='csv_text' value='" + csvText + "'></form><script>document.getElementById('downloadForm').submit(); </script>'");
+
 
 /*
 	var savePanel = [CPSavePanel savePanel];
