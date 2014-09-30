@@ -1,7 +1,7 @@
 mergecolumns
 ============
 
-This is a web application that uses the Cappuccino framework to group columns from multiple spreadsheets.  It is designed to run at the root level of a domain or virtual domain, but a few adjustments could be made to run it in a sub-directory of a domain as well.
+This is a web application that uses the Cappuccino framework (http://www.cappuccino-project.org) to group columns from multiple spreadsheets.  It is designed to run at the root level of a domain or virtual domain, but a few adjustments could be made to run it in a sub-directory of a domain as well.
 
 File Structure
 --------------
@@ -19,6 +19,17 @@ Configuration
 There's not much to configure in the web app, but here is one configuration option that might be used.
 
 AppController.j:  You can adjust the path of the input values CSV files.  In the parseArguments method, the valuesURL variable is instantiated with a string URL.  The default path is /input\_data/*-values.csv.  The * is passed in as part of the URI when launching the web app (see Usage below).  If the file name passed in is "ABC", then the web app will try to download the /input\_data/ABC-values.csv file for it's input.
+
+Deployment
+----------
+You can run the app in an uncompiled state, but you will see some performance degredation.  If you deploy the app using the Cappuccino build tools (https://github.com/cappuccino/cappuccino), it will run much more quickly.  Here are the shell commands that should be used to deploy the app (run them from the repository root directory):
+
+    % jake deploy
+      # Pressed build is placed in Build/Deployment/ColumnMerger
+    % flatten Build/Deployment/ColumnMerger Build/Deployment/ColumnMerger-flat
+      # Flattened build now resides in Build/Deployment/ColumnMerger-flat.
+
+Then just copy the contents of Build/Deployment/ColumnMerger-flat to the desired directory on your web server.
 
 Usage
 -----
