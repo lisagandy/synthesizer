@@ -129,6 +129,34 @@ var CMColumnManager_sharedManager = nil;
 	[sidebarView updateContent];
 }
 
+/* Returns a list of spreadsheet names from the column values. */
+- (CPArray)spreadsheetNames {
+	// Reduce into a CPSet object, where duplicates will be ignored.
+	var names = [[CPMutableSet alloc] init];
+	for (var i = 0; i < [columns count]; i++) {
+		var columnSpreadsheet = [[columns objectAtIndex:i] spreadsheet];
+		if (columnSpreadsheet != nil) [names addObject:columnSpreadsheet];
+	}
+	
+	return [names allObjects];
+}
+
+/* Returns the total number of rows in a specified spreadsheet. */
+- (CPInteger)rowsInSpreadsheet:(CPString)spreadsheetName {
+	var /* CPInteger */ maxRows = 0;
+	for (var i = 0; i < [columns count]; i++) {
+		var /* CMColumn */ column = [columns objectAtIndex:i];
+		if ([[column spreadsheet] isEqualToString:spreadsheetName]) {
+			var thisColumnRowCount = [[column originalValues] count];
+			if (thisColumnRowCount > maxRows) {
+				maxRows = thisColumnRowCount;
+			}
+		}
+	}	
+	
+	return maxRows;
+}
+
 /*** CSV Handling ***/
 - (void)importCSV:(CMCSV)csvFile {
 	var groups = [CPMutableDictionary dictionary];
@@ -252,12 +280,13 @@ var CMColumnManager_sharedManager = nil;
 
 	var maxValueCount = 0;														// We need to know the max number of values we need to print, spreadsheets might each have different numbers of rows.
 
-	// Create the column order.  Columns should be ordered by group name first, and then solo columns at the end.
+	// Create the column order.  The orderedColumn array will have CMColumnGroup objects first, then solo CMColumn objects at the end.
 	var orderedColumns = [CPMutableArray array];
 	for (var groupIndex = 0; groupIndex < [columnGroups count]; groupIndex++) {
 		var /* CMColumnGroup */ group = [columnGroups objectAtIndex:groupIndex];
-		var /* CPArray[CMColumn] */ groupColumns = [self columnsInGroup:group];
-		if (groupColumns) [orderedColumns addObjectsFromArray:groupColumns];
+		if ([group soloGroup]) continue;
+		if ([group allGroup]) continue;
+		if (group) [orderedColumns addObject:group];
 	}
 	var /* CPArray[CMColumn] */ solo = [self soloColumns];
 	if (solo) [orderedColumns addObjectsFromArray:solo];
@@ -265,9 +294,9 @@ var CMColumnManager_sharedManager = nil;
 	// Check to make sure every column has a name.  Remove any column from our export that doesn't have a name set.
 	var namelessColumns = [CPMutableArray array];
 	for (var index = 0; index < [orderedColumns count]; index++) {
-		var /* CMColumn */ column = [orderedColumns objectAtIndex:index];
-		if ([[column name] length] == 0) {
-			[namelessColumns addObject:column];
+		var /* CMColumn or CMColumnGroup */ columnOrGroup = [orderedColumns objectAtIndex:index];
+		if ([[self nameOfColumnOrGroup:columnOrGroup] length] == 0) {
+			[namelessColumns addObject:columnOrGroup];
 		}
 	}
 	[orderedColumns removeObjectsInArray:namelessColumns];
@@ -275,58 +304,105 @@ var CMColumnManager_sharedManager = nil;
 	// Now we have an ordered array of columns that have names associated with them.
 	var orderedColumnCount = [orderedColumns count];
 	
-	// Generate the first row, which are the column names (both original and modified group names).
+	// Generate the first row, which include the spreadsheet name in the first column followed by the additional column names.
 	var /* CPArray[CPString] */ firstRow = [CPMutableArray array];
+	[firstRow addObject:@"Spreadsheet Name"];
 	for (var index = 0; index < orderedColumnCount; index++) {
-		var /* CMColumn */ column = [orderedColumns objectAtIndex:index];
-		[firstRow addObject:[column name]];
-		[firstRow addObject:[[column group] name] ? [[column group] name] : [column name]];
+		var /* CMColumn or CMColumnGroup */ columnOrGroup = [orderedColumns objectAtIndex:index];
+		var /* CPString */ columnOrGroupName = [self nameOfColumnOrGroup:columnOrGroup];
 		
-		// Find our max value count.
-		var columnOriginalValueCount = [[column originalValues] count];
-		var columnModifiedValueCount = [[column modifiedValues] count];
-		if (columnOriginalValueCount > maxValueCount) maxValueCount = columnOriginalValueCount;
-		if (columnModifiedValueCount > maxValueCount) maxValueCount = columnModifiedValueCount;
+		[firstRow addObject:columnOrGroupName];
 	}
 	[lines addObject:firstRow];
 	
-	// Print the second row, which marks which spreadsheet the column is from.
-	var /* CPArray[CPString] */ secondRow = [CPMutableArray array];
-	for (var index = 0; index < orderedColumnCount; index++) {
-		var /* CMColumn */ column = [orderedColumns objectAtIndex:index];
-		[secondRow addObject:[column spreadsheet] ? [column spreadsheet] : @""];
-		[secondRow addObject:@""];
-	}
-	[lines addObject:secondRow];
-
-	// Now append the value rows.
-	for (var valueIndex = 0; valueIndex < maxValueCount; valueIndex++) {
-		var /* CPArray[CPString] */ line = [CPMutableArray array];
-		for (var columnIndex = 0; columnIndex < orderedColumnCount; columnIndex++) {
-			var /* CMColumn */ column = [orderedColumns objectAtIndex:columnIndex];
-			var /* CPArray[CPString] */ originalValues = [column originalValues];
-			var /* CPArray[CPString] */ modifiedValues = [column modifiedValues];
+	// Get a list of spreadsheets.
+	var /* CPArray */ spreadsheets = [self spreadsheetNames];
+	
+	// For each spreadsheet, get an array of values.
+	for (var spreadsheetIndex = 0; spreadsheetIndex < [spreadsheets count]; spreadsheetIndex++) {
+		var /* CPString */ spreadsheetName = [spreadsheets objectAtIndex:spreadsheetIndex];
+		if (!spreadsheetName) continue;
+		
+		var /* CPArray */ spreadsheetRows = [self valuesForSpreadsheet:spreadsheetName columnOrGroupOrder:orderedColumns];
+		for (var row = 0; row < [spreadsheetRows count]; row++) {
+			// Append this row to our output.
+			var /* CPArray[CPString] */ line = [CPMutableArray array];
 			
-			if (valueIndex < [originalValues count]) {
-				[line addObject:[originalValues objectAtIndex:valueIndex]];
-			}
-			else {
-				[line addObject:@""];
-			}
+			// Add the spreadsheet name as the first column.
+			[line addObject:spreadsheetName];
 			
-			if (valueIndex < [modifiedValues count]) {
-				[line addObject:[modifiedValues objectAtIndex:valueIndex]];
-			}
-			else {
-				[line addObject:@""];
-			}
+			// Now add the rest of the columns.
+			[line addObjectsFromArray:[spreadsheetRows objectAtIndex:row]];
+			
+			// Finally append it to our lines array.
+			[lines addObject:line];
 		}
-		[lines addObject:line];
 	}
 	
+	// Finally, use our generated lines to create a CSV file.	
 	var csv = [[CMCSV alloc] init];
 	[csv setLines:lines];
 	return csv;
+}
+
+- (CPString)nameOfColumnOrGroup:(CPString)columnOrGroup {
+		// Get the column name.  Notice that the same "name" method is called for either type of object, but still define separate branches to be more explicit with the data we are using. 		
+		if ([columnOrGroup isKindOfClass:[CMColumn class]]) {
+			return [columnOrGroup name];
+		}
+		else if ([columnOrGroup isKindOfClass:[CMColumnGroup class]]) {
+			return [columnOrGroup name];
+		}
+		else {
+			return @"";
+		}
+}
+
+/* This is a workhorse method.  We could have integrated it into exportCSV because that is the only place it is used, but it makes the code easier to maintain if we split it out. */
+- (CPArray)valuesForSpreadsheet:(CPString)spreadsheetName columnOrGroupOrder:(CPArray)orderedColumns {
+	// First find out how many rows we should be generating.
+	var /* CPInteger */ spreadsheetRows = [self rowsInSpreadsheet:spreadsheetName];
+
+	var lines = [CPMutableArray array];
+
+	for (var row = 0; row < spreadsheetRows; row++) {
+		var line = [CPMutableArray array];
+		
+		for (var col = 0; col < [orderedColumns count]; col++) {
+			var columnValue = @"";
+			
+			var /* CMColumn or CMColumnGroup */ columnOrGroup = [orderedColumns objectAtIndex:col];
+			if ([columnOrGroup isKindOfClass:[CMColumn class]]) {			
+				if ([[columnOrGroup spreadsheet] isEqualToString:spreadsheetName]) {
+					// This is a column in our spreadsheet.  Get the final values for it.
+					var /* CPArray */ finalValues = [columnOrGroup finalValues];
+					if (row < [finalValues count]) {
+						columnValue = [finalValues objectAtIndex:row];
+					}
+				}
+			}
+			else if ([columnOrGroup isKindOfClass:[CMColumnGroup class]]) {
+				// Get the column in this group that corresponds to our spreadsheet.
+				var /* CPArray[CMGroup] */ groupColumns = [self columnsInGroup:columnOrGroup];
+				for (var i = 0; i < [groupColumns count]; i++) {
+					var /* CMColumn */ groupColumn = [groupColumns objectAtIndex:i];
+					if ([[groupColumn spreadsheet] isEqualToString:spreadsheetName]) {
+						// This is a column in our spreadsheet.  Get the final values for it.
+						var /* CPArray */ finalValues = [groupColumn finalValues];
+						if (row < [finalValues count]) {
+							columnValue = [finalValues objectAtIndex:row];
+						}
+					}
+				}
+			}
+			
+			[line addObject:columnValue];
+		}
+		
+		[lines addObject:line];
+	}
+	
+	return lines;
 }
 
 @end

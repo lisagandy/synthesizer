@@ -83,7 +83,7 @@
 		[saveButton setFont:[CPFont systemFontOfSize:18]];
 		[saveButton setTextColor:[CPColor whiteColor]];
 		[saveButton setAutoresizingMask:CPViewMinXMargin | CPViewMaxYMargin];
-		[saveButton setTitle:"Done"];
+		[saveButton setTitle:"Merge"];
 		[saveButton setTarget:self];
 		[saveButton setAction:@selector(save:)];
 		[self addSubview:saveButton];
@@ -107,44 +107,26 @@
 - (IBAction)save:(CPButton)sender {
 	var /* CMCSV */ csv = [[CMColumnManager sharedManager] exportCSV];
 	var /* CPString */ csvText = [csv exportCSV];
+	
+	// convert " in CSV to &#34;
+	csvText = csvText.replace(/"/g, '&#34;');
 
-//	var /* CPString */ boundary = "----------ColumnMergerBoundary";
-//	var /* CPString */ httpBody = [CPString stringWithFormat:@"%@\r\nContent-Disposition: form-data; name=\"csv\"; filename=\"MergedColumns.csv\"\r\nContent-Type: plain/text\r\n\r\n%@\r\n%@", boundary, csvText, boundary];
-//
-//	var /* CPURLRequest */ request = [[CPURLRequest alloc] initWithURL:[CPURL URLWithString:@"/cgi-bin/columnmerger-download.cgi"]];
-//	[request setHTTPMethod:@"POST"];
-//	[request setValue:[CPString stringWithFormat:@"multipart/form-data;boundary=%@", boundary] forHTTPHeaderField:@"Content-type"];
-//	[request setHTTPBody:httpBody];
-//	
-//	[[CPURLConnection alloc] initWithRequest:request delegate:self];
-//	[request release];
+
+	var /* CPString */ html = "<form id=\"downloadForm\" method=\"POST\" action=\"/cgi-bin/columnmerger-download.cgi\"><input type=\"hidden\" name=\"csv_text\" value=\"" + csvText + "\"></form><script>document.getElementById('downloadForm').submit(); </script>'";
 
 /*
-	var uriContent = "data:application/octet-stream;filename=filename.txt," + [csv exportCSV];
-	var myWindow = window.open(uriContent, "filename.txt");
-*/
-
-/*
-	var pom = document.createElement('a');
-	pom.setAttribute('href', "data:application/octet-stream;charset=utf-8," + encodeURIComponent(csvText));
-	pom.setAttribute('download', "MergedColumns.csv");
-	pom.click();
-*/
-
-
 	var myWindow = window.open("", "MsgWindow", "width=300, height=200");
-	myWindow.document.write("<form id='downloadForm' method='POST' action='/cgi-bin/columnmerger-download.cgi'><input type='hidden' name='csv_text' value='" + csvText + "'></form><script>document.getElementById('downloadForm').submit(); </script>'");
-
-
-/*
-	var savePanel = [CPSavePanel savePanel];
-	var response = [savePanel runModal];
-
-	if (!response) return;
-
-	var saveURL = [savePanel URL];
-	console.log(saveURL);
+	myWindow.document.write(html);
 */
+
+	var frame = document.createElement("IFRAME");
+	frame.style.display = "none";
+	frame.srcdoc = html;
+/*
+	var frameDocument = frame.contentDocument;
+	frameDocument.write(html);
+*/
+	document.body.appendChild(frame);
 }
 
 - (IBAction)addGroup:(CPButton)sender {
