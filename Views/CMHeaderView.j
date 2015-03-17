@@ -17,7 +17,7 @@
 @implementation CMHeaderView : CPView
 {
 	CPMainView mainView @accessors;
-		
+	
 	CPButton addGroupButton;
 	CPTextField title;
 	CPSearchField searchField;
@@ -28,7 +28,7 @@
 	self = [super initWithFrame:aFrame];
 	if (self) {		
 		title = [[CPTextField alloc] initWithFrame:CGRectInset(aFrame, 10, 0)];
-		[title setFont:[CPFont boldSystemFontOfSize:20.0]];
+		[title setFont:[CPFont systemFontOfSize:20.0]];
 		[title setAutoresizingMask:CPViewMinXMargin | CPViewMaxXMargin];
 		[title setAlignment:CPCenterTextAlignment];
 		[title setVerticalAlignment:CPCenterVerticalTextAlignment];
