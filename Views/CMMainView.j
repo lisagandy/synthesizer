@@ -16,13 +16,13 @@
 @import <AppKit/AppKit.j>
 @import "CMMainItemView.j"
 @import "../Model/CMColumnManager.j"
-@import "CMValueEditingView.j"
+@import "CMEditorView.j"
 
 @implementation CMMainView : CPView
 {
 	CPScrollView scrollView;
 	CPTableView tableView;
-	CMValueEditingView valueEditor;
+	CMEditorView valueEditor;
 		
 	CMColumnGroup selectedGroup;
 	
@@ -163,7 +163,7 @@
 
 - (void)openValueEditor:(CMColumn)editingColumn {
 	if (!valueEditor) {
-		valueEditor = [[CMValueEditingView alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+		valueEditor = [[CMEditorView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
 		[valueEditor setMainView:self];
 		[valueEditor setAutoresizingMask:CPViewMinXMargin | CPViewMaxXMargin | CPViewMinYMargin | CPViewMaxYMargin | CPViewHeightSizable];
 	}

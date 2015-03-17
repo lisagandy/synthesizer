@@ -1,5 +1,5 @@
 /*
- * CMHeaderView.j
+ * CMValueEditingView.j
  * ColumnMerger
  *
  * Created by Mike Piatek-Jimenez.
@@ -22,7 +22,7 @@
 	
 	CPTextField columnNameLabel;
 	CPTextField columnSpreadsheetLabel;
-	CPButton doneButton;
+	CPPopUpButton columnNamePopup;
 	CPScrollView scrollView;
 	CPTableView tableView;
 	
@@ -45,7 +45,7 @@
 }
 
 - (void)refreshDisplay {
-	var bounds = CPRectInset([self bounds], 2, 2);
+	var bounds = [self bounds];
 
 	if (!columnNameLabel) {
 		columnNameLabel = [[CPTextField alloc] initWithFrame:CGRectMake(bounds.origin.x + 10., bounds.origin.y, bounds.size.width - 20., headerHeight * 0.6)];
@@ -90,12 +90,12 @@
 		[tableView setTarget:self];
 
 		var tableColumn = [[CPTableColumn alloc] initWithIdentifier:@"Original Value"];
-		[tableColumn setWidth:([self bounds].size.width - 10) * 0.5];
+		[tableColumn setWidth:bounds.size.width * 0.5];
 		[[tableColumn headerView] setStringValue:@"Original Value"];
 		[tableView addTableColumn:tableColumn];
 		
 		tableColumn = [[CPTableColumn alloc] initWithIdentifier:@"Modified Value"];
-		[tableColumn setWidth:([self bounds].size.width - 10) * 0.5];
+		[tableColumn setWidth:bounds.size.width * 0.5];
 		[tableColumn setEditable:YES];
 		[[tableColumn headerView] setStringValue:@"Modified Value (Editable)"];
 		[tableView addTableColumn:tableColumn];
@@ -112,39 +112,6 @@
 
 - (void)drawRect:(CGRect)rect {
 	var bounds = CPRectInset([self bounds], 2, 2);
-
-	var bp = [CPBezierPath bezierPathWithRoundedRect:bounds xRadius:radius yRadius:radius];
-	[bp setLineWidth:2];
-	[[CPColor whiteColor] set];	
-	[bp fill];	
-	
-	var context = [[CPGraphicsContext currentContext] graphicsPort];
-
-	// Clip the context and draw the heading gradient.
-	CGContextSaveGState(context);
-	CGContextBeginPath(context);
-	CGContextMoveToPoint(context, bounds.origin.x, bounds.origin.y + radius);
-	CGContextAddArc(context, bounds.origin.x + radius, bounds.origin.y + radius, radius, -PI, -PI_2, YES);
-	CGContextAddLineToPoint(context, bounds.origin.x + bounds.size.width - radius, bounds.origin.y);
-	CGContextAddArc(context, bounds.origin.x + bounds.size.width - radius, bounds.origin.y + radius, radius, -PI_2, 0, YES);
-	CGContextAddLineToPoint(context, bounds.origin.x + bounds.size.width, bounds.origin.y + bounds.size.height);
-	CGContextAddLineToPoint(context, bounds.origin.x, bounds.origin.y + bounds.size.height);
-	CGContextClip(context);	
-	[CMHeadingGradient drawInRect:CGRectMake(bounds.origin.x, bounds.origin.y, bounds.size.width, 44.) angle:90];
-	CGContextRestoreGState(context);
-	
-	// Draw the border.
-	CGContextBeginPath(context);
-	CGContextMoveToPoint(context, bounds.origin.x, bounds.origin.y + radius);
-	CGContextAddArc(context, bounds.origin.x + radius, bounds.origin.y + radius, radius, -PI, -PI_2, YES);
-	CGContextAddLineToPoint(context, bounds.origin.x + bounds.size.width - radius, bounds.origin.y);
-	CGContextAddArc(context, bounds.origin.x + bounds.size.width - radius, bounds.origin.y + radius, radius, -PI_2, 0, YES);
-	CGContextAddLineToPoint(context, bounds.origin.x + bounds.size.width, bounds.origin.y + bounds.size.height);
-	CGContextAddLineToPoint(context, bounds.origin.x, bounds.origin.y + bounds.size.height);
-	CGContextClosePath(context);
-	[[CPColor darkGrayColor] set];
-	CGContextSetLineWidth(context, 2);
-	CGContextStrokePath(context);
 }
 
 - (IBAction)done:(id)sender {
