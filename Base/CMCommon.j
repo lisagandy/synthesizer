@@ -16,5 +16,11 @@ CMOldIDColumnName = "Old ID/Grouping";
 CMNewIDColumnName = "New ID";
 CMSpreadsheetColumnName = "Spreadsheet";
 
+// Colors
+CMPrimaryColorHue = 0.622;
+CMPrimaryColorSaturation = 0.609;
+CMPrimaryColorBrightness = 0.933;
+
 // Gradients
-CMHeadingGradient = [[CPGradient alloc] initWithStartingColor:[CPColor colorWithHue:0.597 saturation:0.666 brightness:0.83 alpha:1] endingColor:[CPColor colorWithHue:0.597 saturation:0.666 brightness:0.65 alpha:1]];
+CMHeadingGradient = [[CPGradient alloc] initWithStartingColor:[CPColor colorWithHue:CMPrimaryColorHue saturation:CMPrimaryColorSaturation brightness:CMPrimaryColorBrightness alpha:1] endingColor:[CPColor colorWithHue:CMPrimaryColorHue saturation:0.663 brightness:0.816 alpha:1]];
+CMColumnEditorHeadingGradient = [[CPGradient alloc] initWithStartingColor:[CPColor colorWithWhite:1 alpha:1] endingColor:[CPColor colorWithWhite:0.92 alpha:1]];
