@@ -45,6 +45,20 @@ var CMColumnManager_sharedManager = nil;
 	return self;
 }
 
+- (CMColumnGroup)allGroup {
+	var /* CMColumnGroup */ retColumnGroup = nil;
+	
+	for (var i = 0; i < [columnGroups count]; i++) {
+		var group = [columnGroups objectAtIndex:i];
+		if ([group allGroup]) {
+			retColumnGroup = group;
+			break;
+		}
+	}
+
+	return retColumnGroup;	
+}
+
 - (CPArray)soloColumns {
 	// Return the columns without a group.
 	var retArray = [CPMutableArray array];
