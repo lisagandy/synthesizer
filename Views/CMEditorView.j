@@ -35,15 +35,15 @@
 - (id)initWithFrame:(CGRect)aFrame {
 	self = [super initWithFrame:aFrame];
 	if (self) {
-		headerHeight = 40;
-		radius = 8;
+		headerHeight = 39;
+		radius = 5;
 		selectedSegment = 0;
 		
 		var bounds = CPRectInset([self bounds], 2, 2);
 
 		// Segment Control
 		var ratio = 0.7;
-		segments = [[CPSegmentedControl alloc] initWithFrame:CGRectMake(bounds.origin.x + (0.5 * (1 - ratio)) * bounds.size.width, bounds.origin.y + 7, bounds.size.width * ratio, headerHeight - 10)];
+		segments = [[CPSegmentedControl alloc] initWithFrame:CGRectMake(bounds.origin.x + (0.5 * (1 - ratio)) * bounds.size.width, bounds.origin.y + 7, bounds.size.width * ratio, 25)];
 		[segments setSegmentCount:2];
 		[segments setSelectedSegment:0];
 		[segments setLabel:"Edit Column Values" forSegment:0];
@@ -83,6 +83,9 @@
 
 - (void)setSelectedSegment:(var)segmentNumber {
 	selectedSegment = segmentNumber;
+	if ([segments selectedSegment] != segmentNumber) {
+		[segments setSelectedSegment:segmentNumber];
+	}
 	[self refreshDisplay];
 }
 
@@ -112,8 +115,12 @@
 	CGContextAddLineToPoint(context, bounds.origin.x + bounds.size.width, bounds.origin.y + bounds.size.height);
 	CGContextAddLineToPoint(context, bounds.origin.x, bounds.origin.y + bounds.size.height);
 	CGContextClip(context);	
-	[CMColumnEditorHeadingGradient drawInRect:CGRectMake(bounds.origin.x, bounds.origin.y, bounds.size.width, 44.) angle:90];
+	[CMColumnEditorHeadingGradient drawInRect:CGRectMake(bounds.origin.x, bounds.origin.y, bounds.size.width, headerHeight) angle:90];
 	CGContextRestoreGState(context);
+	
+	// Draw a pinstripe below the header
+	[[CPColor lightGrayColor] set];
+	CGContextFillRect(context, CGRectMake(bounds.origin.x, bounds.origin.y + headerHeight, bounds.size.width, 1));
 	
 	// Draw the border.
 	CGContextBeginPath(context);

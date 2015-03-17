@@ -174,7 +174,7 @@
 	var /* CGSize */ editorSize = CGSizeMake(MIN(500, svBounds.size.width - 100), MIN(700, svBounds.size.height - 100));
 	
 	[valueEditor setFrame:CGRectMake((svBounds.size.width - editorSize.width) * 0.5, (svBounds.size.height - editorSize.height) * 0.5, editorSize.width, editorSize.height)];
-	
+	[valueEditor setSelectedSegment:0];
 	[valueEditor setEditingColumn:latestContent[[tableView clickedRow]]];
 	[sv addSubview:valueEditor];
 }
