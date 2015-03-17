@@ -86,6 +86,10 @@
 	searchString = [[CPString stringWithFormat:@"%@ %@", name ? name : @"", spreadsheet ? spreadsheet : @""] lowercaseString];
 }
 
+- (CPString)combinedName {
+	return [CPString stringWithFormat:@"%@ (%@)", name ? name : @"", spreadsheet ? spreadsheet : @""];
+}
+
 - (CPString)description {
 	return [CPString stringWithFormat:@"CMColumn {\n    Name: %@\n    Spreadsheet: %@\n    Values: (%d, %d)\n}", name ? name : @"", spreadsheet ? spreadsheet : @"", [originalValues count], [modifiedValues count]];
 }
