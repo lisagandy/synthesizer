@@ -14,6 +14,7 @@
 @import <AppKit/AppKit.j>
 
 @import "CMColumnEditorView.j"
+@import "CMFindAndReplaceEditorView.j"
 
 @import "../Base/CMCommon.j"
 @import "../Model/CMColumn.j"
@@ -25,8 +26,8 @@
 
 	CPSegmentedControl segments;
 	var selectedSegment @accessors;	
-	CMColumnEditorView segment1View;    // Tab 1 - Edit Column Values
-	CPView segment2View;				// Tab 2 - Find and Replace
+	CMColumnEditorView segment1View;		    // Tab 1 - Edit Column Values
+	CMFindAndReplaceEditorView segment2View;	// Tab 2 - Find and Replace
 	
 	var headerHeight;
 	var radius;
@@ -59,17 +60,24 @@
 		segment1View = [[CMColumnEditorView alloc] initWithFrame:CGRectMake(bounds.origin.x + 1, bounds.origin.y + headerHeight, bounds.size.width - 2, bounds.size.height - headerHeight - 1)];
 		[segment1View setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
 		[self addSubview:segment1View];
+		
+		// Segment 2 View
+		segment2View = [[CMFindAndReplaceEditorView alloc] initWithFrame:CGRectMake(bounds.origin.x + 1, bounds.origin.y + headerHeight, bounds.size.width - 2, bounds.size.height - headerHeight - 1)];
+		[segment2View setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+		[segment2View setHidden:YES];
+		[self addSubview:segment2View];
 
 		// Done Button
-		doneButton = [[CPButton alloc] initWithFrame:CGRectMake(bounds.origin.x + bounds.size.width - 30, bounds.origin.y + 7, 20, headerHeight - 10)];
+		doneButton = [[CPButton alloc] initWithFrame:CGRectMake(bounds.origin.x + bounds.size.width - 30, bounds.origin.y + 10, 20, 20)];
 		[doneButton setBordered:NO];
+		[doneButton setImage:[[CPImage alloc] initWithContentsOfFile:("Resources/close-circle.png") size:CPSizeMake(20, 20)]];
+		[doneButton setAlternateImage:[[CPImage alloc] initWithContentsOfFile:("Resources/close-circle-highlighted.png") size:CPSizeMake(20, 20)]];
 		[doneButton setFont:[CPFont systemFontOfSize:18]];
 		[doneButton setTextColor:[CPColor colorWithHue:CMPrimaryColorHue saturation:CMPrimaryColorSaturation brightness:CMPrimaryColorBrightness alpha:1]];
-		[doneButton setAutoresizingMask:CPViewMinXMargin | CPViewMaxYMargin];
-		[doneButton setTitle:"x"];
 		[doneButton setTarget:self];
 		[doneButton setAction:@selector(done:)];
 		[doneButton setAutoresizingMask:CPViewMinXMargin | CPViewMaxYMargin];
+		[doneButton setButtonType:CPMomentaryChangeButton];
 		[self addSubview:doneButton];
 
 		[self setNeedsDisplay:YES];
@@ -86,6 +94,16 @@
 	if ([segments selectedSegment] != segmentNumber) {
 		[segments setSelectedSegment:segmentNumber];
 	}
+
+	if (selectedSegment == 0) {
+		[segment1View setHidden:NO];
+		[segment2View setHidden:YES];
+	}
+	else if (selectedSegment == 1) {
+		[segment1View setHidden:YES];
+		[segment2View setHidden:NO];
+	}
+
 	[self refreshDisplay];
 }
 
@@ -120,7 +138,7 @@
 	
 	// Draw a pinstripe below the header
 	[[CPColor lightGrayColor] set];
-	CGContextFillRect(context, CGRectMake(bounds.origin.x, bounds.origin.y + headerHeight, bounds.size.width, 1));
+	CGContextFillRect(context, CGRectMake(bounds.origin.x, bounds.origin.y + headerHeight - 1, bounds.size.width, 1));
 	
 	// Draw the border.
 	CGContextBeginPath(context);
