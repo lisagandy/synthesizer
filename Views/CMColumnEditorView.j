@@ -1,5 +1,5 @@
 /*
- * CMValueEditingView.j
+ * CMColumnEditorView.j
  * ColumnMerger
  *
  * Created by Mike Piatek-Jimenez.
@@ -15,7 +15,7 @@
 
 @import "../Model/CMColumn.j"
 
-@implementation CMValueEditingView : CPView
+@implementation CMColumnEditorView : CPView
 {
 	CPMainView mainView @accessors;
 	

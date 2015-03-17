@@ -13,7 +13,7 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-@import "CMValueEditingView.j"
+@import "CMColumnEditorView.j"
 
 @import "../Base/CMCommon.j"
 @import "../Model/CMColumn.j"
@@ -25,7 +25,7 @@
 
 	CPSegmentedControl segments;
 	var selectedSegment @accessors;	
-	CMValueEditingView segment1View;    // Tab 1 - Edit Column Values
+	CMColumnEditorView segment1View;    // Tab 1 - Edit Column Values
 	CPView segment2View;				// Tab 2 - Find and Replace
 	
 	var headerHeight;
@@ -56,7 +56,7 @@
 		[self addSubview:segments];
 
 		// Segment 1 View
-		segment1View = [[CMValueEditingView alloc] initWithFrame:CGRectMake(bounds.origin.x + 1, bounds.origin.y + headerHeight, bounds.size.width - 2, bounds.size.height - headerHeight - 1)];
+		segment1View = [[CMColumnEditorView alloc] initWithFrame:CGRectMake(bounds.origin.x + 1, bounds.origin.y + headerHeight, bounds.size.width - 2, bounds.size.height - headerHeight - 1)];
 		[segment1View setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
 		[self addSubview:segment1View];
 
