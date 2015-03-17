@@ -92,7 +92,7 @@
 		
 	if (!label) {
 		label = [[CPTextField alloc] initWithFrame:CGRectMake(bounds.origin.x + 10., bounds.origin.y, bounds.size.width - 20., bounds.size.height * .6)];
-		[label setFont:[CPFont boldSystemFontOfSize:14.0]];
+		[label setFont:[CPFont systemFontOfSize:14.0]];
 		[label setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
 		[label setVerticalAlignment:CPBottomVerticalTextAlignment];
 		[self addSubview:label];
