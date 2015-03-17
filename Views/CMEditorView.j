@@ -40,6 +40,9 @@
 		radius = 5;
 		selectedSegment = 0;
 		
+		// Give ourselves a shadow.
+		self._DOMElement.style.boxShadow = "0px 5px 35px #666";
+		
 		var bounds = CPRectInset([self bounds], 2, 2);
 
 		// Segment Control
@@ -57,12 +60,12 @@
 		[self addSubview:segments];
 
 		// Segment 1 View
-		segment1View = [[CMColumnEditorView alloc] initWithFrame:CGRectMake(bounds.origin.x + 1, bounds.origin.y + headerHeight, bounds.size.width - 2, bounds.size.height - headerHeight - 1)];
+		segment1View = [[CMColumnEditorView alloc] initWithFrame:CGRectMake(bounds.origin.x, bounds.origin.y + headerHeight, bounds.size.width, bounds.size.height - headerHeight - 1)];
 		[segment1View setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
 		[self addSubview:segment1View];
 		
 		// Segment 2 View
-		segment2View = [[CMFindAndReplaceEditorView alloc] initWithFrame:CGRectMake(bounds.origin.x + 1, bounds.origin.y + headerHeight, bounds.size.width - 2, bounds.size.height - headerHeight - 1)];
+		segment2View = [[CMFindAndReplaceEditorView alloc] initWithFrame:CGRectMake(bounds.origin.x, bounds.origin.y + headerHeight, bounds.size.width, bounds.size.height - headerHeight - 1)];
 		[segment2View setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
 		[segment2View setHidden:YES];
 		[self addSubview:segment2View];
@@ -72,8 +75,6 @@
 		[doneButton setBordered:NO];
 		[doneButton setImage:[[CPImage alloc] initWithContentsOfFile:("Resources/close-circle.png") size:CPSizeMake(20, 20)]];
 		[doneButton setAlternateImage:[[CPImage alloc] initWithContentsOfFile:("Resources/close-circle-highlighted.png") size:CPSizeMake(20, 20)]];
-		[doneButton setFont:[CPFont systemFontOfSize:18]];
-		[doneButton setTextColor:[CPColor colorWithHue:CMPrimaryColorHue saturation:CMPrimaryColorSaturation brightness:CMPrimaryColorBrightness alpha:1]];
 		[doneButton setTarget:self];
 		[doneButton setAction:@selector(done:)];
 		[doneButton setAutoresizingMask:CPViewMinXMargin | CPViewMaxYMargin];
@@ -112,7 +113,7 @@
 }
 
 - (void)drawRect:(CGRect)rect {
-	var bounds = CPRectInset([self bounds], 2, 2);
+	var bounds = CPRectInset([self bounds], 1, 1);
 	
 	[self refreshDisplay];
 
@@ -124,6 +125,7 @@
 	var context = [[CPGraphicsContext currentContext] graphicsPort];
 
 	// Clip the context and draw the heading gradient.
+/*
 	CGContextSaveGState(context);
 	CGContextBeginPath(context);
 	CGContextMoveToPoint(context, bounds.origin.x, bounds.origin.y + radius);
@@ -133,14 +135,22 @@
 	CGContextAddLineToPoint(context, bounds.origin.x + bounds.size.width, bounds.origin.y + bounds.size.height);
 	CGContextAddLineToPoint(context, bounds.origin.x, bounds.origin.y + bounds.size.height);
 	CGContextClip(context);	
+*/
 	[CMColumnEditorHeadingGradient drawInRect:CGRectMake(bounds.origin.x, bounds.origin.y, bounds.size.width, headerHeight) angle:90];
-	CGContextRestoreGState(context);
+// 	CGContextRestoreGState(context);
 	
 	// Draw a pinstripe below the header
 	[[CPColor lightGrayColor] set];
 	CGContextFillRect(context, CGRectMake(bounds.origin.x, bounds.origin.y + headerHeight - 1, bounds.size.width, 1));
 	
 	// Draw the border.
+	CGContextBeginPath(context);
+	CGContextAddRect(context, bounds);
+	[[CPColor darkGrayColor] set];
+	CGContextSetLineWidth(context, 2);
+	CGContextStrokePath(context);
+	
+/*
 	CGContextBeginPath(context);
 	CGContextMoveToPoint(context, bounds.origin.x, bounds.origin.y + radius);
 	CGContextAddArc(context, bounds.origin.x + radius, bounds.origin.y + radius, radius, -PI, -PI_2, YES);
@@ -152,6 +162,7 @@
 	[[CPColor darkGrayColor] set];
 	CGContextSetLineWidth(context, 2);
 	CGContextStrokePath(context);
+*/
 }
 
 - (IBAction)done:(id)sender {
