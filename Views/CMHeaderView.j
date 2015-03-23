@@ -19,6 +19,7 @@
 	CPMainView mainView @accessors;
 	
 	CPButton addGroupButton;
+	CPButton editValuesButton;
 	CPTextField title;
 	CPSearchField searchField;
 	CPButton saveButton;
@@ -77,6 +78,15 @@
 		[addGroupButton setAction:@selector(addGroup:)];
 		[addGroupButton setImagePosition:CPImageOnly];
 		[self addSubview:addGroupButton];
+
+		editValuesButton = [[CPButton alloc] initWithFrame:CGRectMake(aFrame.size.height, 0, aFrame.size.height, aFrame.size.height)];
+		[editValuesButton setBordered:NO];
+		[editValuesButton setAutoresizingMask:CPViewMaxXMargin | CPViewMaxYMargin];
+		[editValuesButton setImage:[[CPImage alloc] initWithContentsOfFile:("Resources/edit-values.png") size:CPSizeMake(19, 19)]];
+		[editValuesButton setTarget:self];
+		[editValuesButton setAction:@selector(editValues:)];
+		[editValuesButton setImagePosition:CPImageOnly];
+		[self addSubview:editValuesButton];
 
 		saveButton = [[CPButton alloc] initWithFrame:CGRectMake(aFrame.origin.x + aFrame.size.width - 10 - 60, 4, 60, 34)];
 		[saveButton setBordered:NO];
@@ -171,6 +181,10 @@
 	var /* CPInteger */ addedGroupIndex = [[[CMColumnManager sharedManager] columnGroups] indexOfObject:addedGroup];
 	[[sidebarView tableView] scrollRowToVisible:addedGroupIndex];
 	[[sidebarView tableView] selectRowIndexes:[CPIndexSet indexSetWithIndex:addedGroupIndex] byExtendingSelection:NO];
+}
+
+- (IBAction)editValues:(CPButton)sender {
+	[mainView openValueEditor:nil];
 }
 
 @end

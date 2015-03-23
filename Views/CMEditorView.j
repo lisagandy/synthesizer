@@ -26,8 +26,8 @@
 
 	CPSegmentedControl segments;
 	var selectedSegment @accessors;	
-	CMColumnEditorView segment1View;		    // Tab 1 - Edit Column Values
-	CMFindAndReplaceEditorView segment2View;	// Tab 2 - Find and Replace
+	CMColumnEditorView segment1View @accessors;		    // Tab 1 - Edit Column Values
+	CMFindAndReplaceEditorView segment2View @accessors;	// Tab 2 - Find and Replace
 	
 	var headerHeight;
 	var radius;
