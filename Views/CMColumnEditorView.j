@@ -49,6 +49,9 @@
 	return self;
 }
 
+- (void)viewDidAppear {
+}
+
 - (void)setEditingColumn:(CMColumn)aColumn {
 	editingColumn = aColumn;
 	

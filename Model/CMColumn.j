@@ -102,16 +102,7 @@
 
 	var /* CPMutableArray */ finalArray = [CPMutableArray array];
 	for (var i = 0; i < [originalValues count]; i++) {
-		var /* CPString */ rowValue = @"";
-		if (i < [modifiedValues count]) {
-			// Try to read the modified value first.
-			rowValue = [modifiedValues objectAtIndex:i];
-		}
-		if ([rowValue length] == 0) {
-			// If the modified value was empty, then use the original value for this row.
-			rowValue = [originalValues objectAtIndex:i];
-		}
-		
+		var /* CPString */ rowValue = [self valueForRow:i];
 		[finalArray addObject:rowValue];
 	}
 	
@@ -141,6 +132,61 @@
 - (BOOL)matchesFilter:(CPString)filter {
 	// Assumes filter is already lowercase.
 	return ([searchString rangeOfString:filter].location != CPNotFound);
+}
+
+// Return YES if the search string is present in our finalValues (which is a combination of our modified and original values (if not modified)).
+- (BOOL)matchesValueSearchString:(CPString)valueSearchString {
+	var values = [self finalValues];
+	
+	for (var i = 0; i < [values count]; i++) {
+		if ([[values objectAtIndex:i] isEqualToString:valueSearchString]) {
+			return YES;
+		}
+	}
+	
+	return NO;
+}
+
+// Loops through the values and replaces any value matching searchString with replacementString.  Returns the number of occurances replaced.
+- (int)replaceValue:(CPString)valueSearchString withValue:(CPString)replacementString {
+	var numReplacements = 0;
+	
+	for (var i = 0; i < [originalValues count]; i++) {
+		var /* CPString */ rowValue = [self valueForRow:i];
+		if ([rowValue isEqualToString:valueSearchString]) {
+			[self saveModifiedValue:replacementString forRow:i];
+			numReplacements++;
+		}
+	}
+	
+	return numReplacements;
+}
+
+// Will check a given row in the spreadsheet.  If a modified value exists, it is returned.  Otherwise the original value is returned.
+- (CPString)valueForRow:(int)row {
+	var /* CPString */ rowValue = @"";
+	if (row < [modifiedValues count]) {
+		// Try to read the modified value first.
+		rowValue = [modifiedValues objectAtIndex:row];
+	}
+	if (([rowValue length] == 0) && (row < [originalValues count])) {
+		// If the modified value was empty, then use the original value for this row.
+		rowValue = [originalValues objectAtIndex:row];
+	}
+	return rowValue;
+}
+
+// The modified value array might not have enough elements, so we have to make sure we pad the array with empty elements before saving the modified value.
+- (CPString)saveModifiedValue:(CPString)modifiedValue forRow:(int)row {
+	var updatedModifiedValues = [CPMutableArray array];
+	if (modifiedValues) [updatedModifiedValues addObjectsFromArray:modifiedValues];
+	
+	while ([updatedModifiedValues count] < row + 1) {
+		[updatedModifiedValues addObject:@""];
+	}
+	
+	[updatedModifiedValues replaceObjectAtIndex:row withObject:modifiedValue];
+	[self setModifiedValues:updatedModifiedValues];
 }
 
 @end

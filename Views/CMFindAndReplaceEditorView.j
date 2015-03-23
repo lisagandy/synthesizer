@@ -13,6 +13,7 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+@import "CMEditorView.j"
 @import "CMColumnEditorView.j"
 
 @import "../Base/CMCommon.j"
@@ -20,6 +21,8 @@
 
 @implementation CMFindAndReplaceEditorView : CPView
 {
+	CMEditorView parentView @accessors;
+	
 	CPTextField findLabel;
 	CPTextField findValue;
 	
@@ -32,6 +35,7 @@
 	CPTableView tableView;
 	
 	CPArray columnSearchResults;  // Array of CMColumn objects.
+	CPArray columnSearchResultsEnabled;   // Array of CPNumber objects with BOOL values, CPOnState if enabled, CPOffState if disabled.  Always the same size as columnSearchResults and updated in setColumnSearchResults.
 }
 
 - (id)initWithFrame:(CGRect)aFrame {
@@ -110,6 +114,7 @@
 		[tableView setDataSource:self];
 		[tableView setDelegate:self];
 		[tableView setTarget:self];
+		[tableView setDoubleAction:@selector(rowDoubleClicked:)];
 
 		var tableColumn = [[CPTableColumn alloc] initWithIdentifier:@"Blank"];
 		[tableColumn setWidth:8];
@@ -130,13 +135,49 @@
 		
 		[scrollView setDocumentView:tableView];
 		[self addSubview:scrollView];
-
+		
+		// Set next and previous key views for the text fields.
+		[findValue setNextKeyView:replaceValue];
+		[replaceValue setNextKeyView:findValue];
 	}
 	return self;
 }
 
+- (void)viewDidAppear {
+	[findValue selectText:self];
+}
+
+- (void)setColumnSearchResults:(CPArray)updatedArray {
+	columnSearchResults = updatedArray;
+	
+	// Set columnSearchResultsEnabled to an array of size [updatedArray count] with 1s as values.
+	var updatedEnabled = [CPMutableArray array];
+	for (var i = 0; i < [updatedArray count]; i++) {
+		[updatedEnabled addObject:[CPNumber numberWithInt:CPOnState]];
+	}
+	
+	columnSearchResultsEnabled = updatedEnabled;
+}
+
 - (IBAction)replaceAction:(id)sender {
-	console.log("replacing '" + [findValue stringValue] + "' with '" + [replaceValue stringValue] + "'");
+	var numReplacements = 0;
+	
+	if ([columnSearchResults count] == [columnSearchResultsEnabled count]) {
+		for (var i = 0; i < [columnSearchResults count]; i++) {
+			if ([[columnSearchResultsEnabled objectAtIndex:i] intValue] == CPOnState) {
+				// Do the replacement.
+				numReplacements += [[columnSearchResults objectAtIndex:i] replaceValue:[findValue stringValue] withValue:[replaceValue stringValue]];
+			}
+		}	
+	}
+	
+	// Show a dialog confirming the replacement.
+	var alert = [[CPAlert alloc] init];
+	[alert addButtonWithTitle:"OK"];
+	[alert setMessageText:numReplacements + " values replaced."];
+	[alert setInformativeText:""];
+	[alert setAlertStyle:CPInformationalAlertStyle];
+	[alert beginSheetModalForWindow:[self window] modalDelegate:nil didEndSelector:nil contextInfo:nil];
 }
 
 - (void)drawRect:(CGRect)rect {
@@ -152,24 +193,7 @@
 // This method will run the actual search and populate the columnSearchResults with matching CMColumn objects.  Note that this method will only search the original column values, and not modified column values.
 - (void)searchColumnValuesForString:(CPString)searchString {
 	var /* CMColumnManager */ columnManager = [CMColumnManager sharedManager];
-	var allColumns = [columnManager columnsInGroup:[columnManager allGroup]];
-
-	var matchingColumns = [CPMutableArray array];
-
-	for (var columnIndex = 0; columnIndex < [allColumns count]; columnIndex++) {
-		var /* CMColumn */ column = [allColumns objectAtIndex:columnIndex];
-		var /* CPArray[CPString] */ originalValues = [column originalValues];
-		
-		for (var originalValueIndex = 0; originalValueIndex < [originalValues count]; originalValueIndex++) {
-			var /* CPString */ originalValue = [originalValues objectAtIndex:originalValueIndex];
-			if ([originalValue isEqualToString:searchString]) {
-				[matchingColumns addObject:column];
-				break;
-			}
-		}
-	}
-	
-	columnSearchResults = matchingColumns;
+	[self setColumnSearchResults:[columnManager columnsWithValuesMatchingString:searchString]];
 	[tableView reloadData];
 }
 
@@ -183,7 +207,7 @@
         return [[columnSearchResults objectAtIndex:aRow] combinedName];	    
     }
     else if ([[aColumn identifier] isEqualToString:@"Matching Column Enabled"]) {
-        return [CPNumber numberWithInt:CPOnState];
+        return [columnSearchResultsEnabled objectAtIndex:aRow];
     }
     else if ([[aColumn identifier] isEqualToString:@"Blank"]) {
 	    return "";
@@ -195,13 +219,25 @@
 - (void)tableView:(CPTableView)aTableView setObjectValue:(id)anObject forTableColumn:(CPTableColumn)aTableColumn row:(CPInteger)aRow {
 	if ([[aTableColumn identifier] isEqualToString:"Matching Column Enabled"]) {
 		if (aRow < [columnSearchResults count]) {
-/*
-			var newModifiedValues = [CPMutableArray arrayWithArray:[editingColumn modifiedValues]];
-			[newModifiedValues removeObjectAtIndex:aRow];
-			[newModifiedValues insertObject:anObject atIndex:aRow];
-			[editingColumn setModifiedValues:newModifiedValues];
-*/
+			console.log("Set object value: " + anObject + " for row: " + aRow + " and column: " + aTableColumn);
+			[columnSearchResultsEnabled replaceObjectAtIndex:aRow withObject:anObject];
 		}
+	}
+}
+
+- (void)rowDoubleClicked:(id)sender {
+	var /* CMColumn */ columnClicked = nil;
+	if ([self.tableView clickedRow] < [columnSearchResults count]) {
+		columnClicked = columnSearchResults[[tableView clickedRow]];
+	}
+	
+	if (columnClicked) [self switchToValueEditor:columnClicked];
+}
+
+- (void)switchToValueEditor:(CMColumn)editingColumn {
+	if (parentView) {
+		[parentView setEditingColumn:editingColumn];
+		[parentView setSelectedSegment:0];
 	}
 }
 

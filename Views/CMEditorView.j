@@ -68,6 +68,7 @@
 		segment2View = [[CMFindAndReplaceEditorView alloc] initWithFrame:CGRectMake(bounds.origin.x, bounds.origin.y + headerHeight, bounds.size.width, bounds.size.height - headerHeight - 1)];
 		[segment2View setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
 		[segment2View setHidden:YES];
+		[segment2View setParentView:self];
 		[self addSubview:segment2View];
 
 		// Done Button
@@ -98,11 +99,13 @@
 
 	if (selectedSegment == 0) {
 		[segment1View setHidden:NO];
+		[segment1View viewDidAppear];
 		[segment2View setHidden:YES];
 	}
 	else if (selectedSegment == 1) {
 		[segment1View setHidden:YES];
 		[segment2View setHidden:NO];
+		[segment2View viewDidAppear];
 	}
 
 	[self refreshDisplay];

@@ -171,6 +171,21 @@ var CMColumnManager_sharedManager = nil;
 	return maxRows;
 }
 
+// This method will search for a string in all of the spreadsheet data and return an array of CMColumn objects that match.  This method will only search for the modified values (or original values for rows that haven't been modified).
+- (CPArray)columnsWithValuesMatchingString:(CPString)valueSearchString {
+	var matchingColumns = [CPMutableArray array];
+
+	for (var columnIndex = 0; columnIndex < [columns count]; columnIndex++) {
+		var /* CMColumn */ column = [columns objectAtIndex:columnIndex];
+		
+		if ([column matchesValueSearchString:valueSearchString]) {
+			[matchingColumns addObject:column];
+		}
+	}
+
+	return matchingColumns;	
+}
+
 /*** CSV Handling ***/
 - (void)importCSV:(CMCSV)csvFile {
 	var groups = [CPMutableDictionary dictionary];
