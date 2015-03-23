@@ -34,8 +34,8 @@
 	CPScrollView scrollView;
 	CPTableView tableView;
 	
-	CPArray columnSearchResults;  // Array of CMColumn objects.
-	CPArray columnSearchResultsEnabled;   // Array of CPNumber objects with BOOL values, CPOnState if enabled, CPOffState if disabled.  Always the same size as columnSearchResults and updated in setColumnSearchResults.
+	CPArray columnSearchResults;  			// Array of CMColumn objects.
+	CPArray columnSearchResultsEnabled;   	// Array of CPNumber objects with BOOL values, CPOnState if enabled, CPOffState if disabled.  Always the same size as columnSearchResults and updated in setColumnSearchResults.
 }
 
 - (id)initWithFrame:(CGRect)aFrame {
