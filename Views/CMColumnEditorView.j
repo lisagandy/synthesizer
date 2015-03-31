@@ -55,7 +55,13 @@
 - (void)setEditingColumn:(CMColumn)aColumn {
 	editingColumn = aColumn;
 	
-	[columnNamePopup selectItemWithTitle:[editingColumn combinedName]];
+	if (editingColumn) {
+		[columnNamePopup selectItemWithTitle:[editingColumn combinedName]];
+	}
+	else {
+		// Just select the first item.
+		if ([columnNamePopup numberOfItems] > 0) [columnNamePopup selectItemAtIndex:0];
+	}	
 	
 	[self refreshDisplay];
 }

@@ -201,92 +201,92 @@ var CMColumnManager_sharedManager = nil;
 
 	// Get our value arrays from the parsed CSV file.	
 	var valueArrays = [csvFile lines];
-	if ([valueArrays count] < 2) return;
-
-	// The first 2 rows of the CSV files are the column names and the spreadsheet names.
-	var /* CPArray */ columnNames = valueArrays[0];
-	var /* CPArray */ spreadsheetNames = valueArrays[1];
-	
-	// For every other column, get the original values, the modified values, the group name, etc.
-	for (var columnIndex = 0; columnIndex < [columnNames count] - 1; columnIndex += 2) {
-		// The column and spreadsheet we are working with.
-		var columnName = columnNames[columnIndex];
-		var spreadsheetName = spreadsheetNames[columnIndex];
-		var groupName = columnNames[columnIndex+1];
+	if ([valueArrays count] >= 2) {
+		// The first 2 rows of the CSV files are the column names and the spreadsheet names.
+		var /* CPArray */ columnNames = valueArrays[0];
+		var /* CPArray */ spreadsheetNames = valueArrays[1];
 		
-		if ([columnName length]) {
-			// Create the column object.
-			var c = [[CMColumn alloc] initWithName:columnName spreadsheet:spreadsheetName];
-			if (c) [cols addObject:c];
-		
-			// Check and attempt to create the group object.
-			if ([groupName length]) {
-				// See if we already have a group with this name.
-				var groupObject = [groups objectForKey:groupName];
-				if (!groupObject) {
-					// Doesn't exist, create it.
-					groupObject = [[CMColumnGroup alloc] initWithName:groupName];
-					[groups setObject:groupObject forKey:groupName];
-				}
-				
-				[c setGroup:groupObject];
-			}
-
-			// Read the original and modified values.
-			var thisColumnOriginalValues = [CPMutableArray array];
-			var thisColumnModifiedValues = [CPMutableArray array];
-			for (var i = 2; i < [valueArrays count]; i++) {
-				var /* CPArray */ lineArray = [valueArrays objectAtIndex:i];
-				
-				// Original value for this line.
-				if ([lineArray count] > columnIndex) [thisColumnOriginalValues addObject:lineArray[columnIndex]];
-				else                                 [thisColumnOriginalValues addObject:@""];
-				
-				// Modified value for this line.
-				if ([lineArray count] > columnIndex + 1) [thisColumnModifiedValues addObject:lineArray[columnIndex + 1]];
-				else                                     [thisColumnModifiedValues addObject:@""];
-			}
+		// For every other column, get the original values, the modified values, the group name, etc.
+		for (var columnIndex = 0; columnIndex < [columnNames count] - 1; columnIndex += 2) {
+			// The column and spreadsheet we are working with.
+			var columnName = columnNames[columnIndex];
+			var spreadsheetName = spreadsheetNames[columnIndex];
+			var groupName = columnNames[columnIndex+1];
 			
-			// Start at the end of the file and work our way up.  Remove rows that are "" "" on both columns.
-			while ([thisColumnModifiedValues count] > 0) {
-				if (([[thisColumnModifiedValues lastObject] length] == 0) && ([[thisColumnOriginalValues lastObject] length] == 0)) {
-					[thisColumnOriginalValues removeLastObject];
-					[thisColumnModifiedValues removeLastObject];
-				}
-				else {
-					break;
-				}
-			}
+			if ([columnName length]) {
+				// Create the column object.
+				var c = [[CMColumn alloc] initWithName:columnName spreadsheet:spreadsheetName];
+				if (c) [cols addObject:c];
 			
-			[c setOriginalValues:thisColumnOriginalValues];
-			[c setModifiedValues:thisColumnModifiedValues];
-		}
-	}
-
-	// Now we have an array of columns and a dictionary of groups.  
-	
-	// Remove any groups that only have one column in them (if the group name is the same as the column name).
-	for (var i = 0; i < [cols count]; i++) {
-		var /* CMColumn */ column = cols[i];
-		var /* CMColumnGroup */ columnGroup = [column group];
-		
-		if (columnGroup) {
-			if ([[columnGroup name] isEqualToString:[column name]]) {
-				// Check to see if any other columns have this same group name.
-				var /* BOOL */ loneGroup = 1;
-				for (var j = 0; j < [cols count]; j++) {
-					if (j == i) continue;
+				// Check and attempt to create the group object.
+				if ([groupName length]) {
+					// See if we already have a group with this name.
+					var groupObject = [groups objectForKey:groupName];
+					if (!groupObject) {
+						// Doesn't exist, create it.
+						groupObject = [[CMColumnGroup alloc] initWithName:groupName];
+						[groups setObject:groupObject forKey:groupName];
+					}
 					
-					if ([cols[j] group] == columnGroup) {
-						loneGroup = 0;
+					[c setGroup:groupObject];
+				}
+	
+				// Read the original and modified values.
+				var thisColumnOriginalValues = [CPMutableArray array];
+				var thisColumnModifiedValues = [CPMutableArray array];
+				for (var i = 2; i < [valueArrays count]; i++) {
+					var /* CPArray */ lineArray = [valueArrays objectAtIndex:i];
+					
+					// Original value for this line.
+					if ([lineArray count] > columnIndex) [thisColumnOriginalValues addObject:lineArray[columnIndex]];
+					else                                 [thisColumnOriginalValues addObject:@""];
+					
+					// Modified value for this line.
+					if ([lineArray count] > columnIndex + 1) [thisColumnModifiedValues addObject:lineArray[columnIndex + 1]];
+					else                                     [thisColumnModifiedValues addObject:@""];
+				}
+				
+				// Start at the end of the file and work our way up.  Remove rows that are "" "" on both columns.
+				while ([thisColumnModifiedValues count] > 0) {
+					if (([[thisColumnModifiedValues lastObject] length] == 0) && ([[thisColumnOriginalValues lastObject] length] == 0)) {
+						[thisColumnOriginalValues removeLastObject];
+						[thisColumnModifiedValues removeLastObject];
+					}
+					else {
 						break;
 					}
 				}
 				
-				if (loneGroup) {
-					// Get rid of this group.
-					[column setGroup:nil];
-					[groups removeObjectForKey:[columnGroup name]];
+				[c setOriginalValues:thisColumnOriginalValues];
+				[c setModifiedValues:thisColumnModifiedValues];
+			}
+		}
+	
+		// Now we have an array of columns and a dictionary of groups.  
+		
+		// Remove any groups that only have one column in them (if the group name is the same as the column name).
+		for (var i = 0; i < [cols count]; i++) {
+			var /* CMColumn */ column = cols[i];
+			var /* CMColumnGroup */ columnGroup = [column group];
+			
+			if (columnGroup) {
+				if ([[columnGroup name] isEqualToString:[column name]]) {
+					// Check to see if any other columns have this same group name.
+					var /* BOOL */ loneGroup = 1;
+					for (var j = 0; j < [cols count]; j++) {
+						if (j == i) continue;
+						
+						if ([cols[j] group] == columnGroup) {
+							loneGroup = 0;
+							break;
+						}
+					}
+					
+					if (loneGroup) {
+						// Get rid of this group.
+						[column setGroup:nil];
+						[groups removeObjectForKey:[columnGroup name]];
+					}
 				}
 			}
 		}

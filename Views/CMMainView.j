@@ -175,16 +175,7 @@
 	
 	[valueEditor setFrame:CGRectMake((svBounds.size.width - editorSize.width) * 0.5, (svBounds.size.height - editorSize.height) * 0.5, editorSize.width, editorSize.height)];
 	[valueEditor setSelectedSegment:0];
-	if (editingColumn) {
-		[valueEditor setEditingColumn:editingColumn];
-	}
-	else if ([[valueEditor segment1View] editingColumn] == nil) {
-		var /* CMColumnManager */ columnManager = [CMColumnManager sharedManager];
-		var allColumns = [columnManager columnsInGroup:[columnManager allGroup]];
-		if ([allColumns count]) {
-			[valueEditor setEditingColumn:[allColumns objectAtIndex:0]];
-		}
-	}
+	[valueEditor setEditingColumn:editingColumn];
 	[sv addSubview:valueEditor];
 }
 

@@ -34,7 +34,9 @@
 - (void)applicationDidFinishLaunching:(CPNotification)aNotification {
 	[[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(urlLoaded:) name:CMURLLoadedNotification object:nil];
 	
-/* 	[self setupColumnManager]; */
+	// Start with an empty CSV file (this will make sure we add the all and solo column groups).
+	[[CMColumnManager sharedManager] importCSV:nil];
+	
 	[self setupViews];
 	[self parseArguments];
 	
