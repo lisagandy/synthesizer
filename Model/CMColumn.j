@@ -129,21 +129,28 @@
 	}
 }
 
+// This is to filter the columns by column name.
 - (BOOL)matchesFilter:(CPString)filter {
 	// Assumes filter is already lowercase.
 	return ([searchString rangeOfString:filter].location != CPNotFound);
 }
 
-// Return YES if the search string is present in our finalValues (which is a combination of our modified and original values (if not modified)).
+// Return YES if the search string is present in our originalValues or modifiedValues.
 - (BOOL)matchesValueSearchString:(CPString)valueSearchString {
-	var values = [self finalValues];
-	
-	for (var i = 0; i < [values count]; i++) {
-		if ([[values objectAtIndex:i] isEqualToString:valueSearchString]) {
+	// Check the original values.
+	for (var i = 0; i < [originalValues count]; i++) {
+		if ([[originalValues objectAtIndex:i] isEqualToString:valueSearchString]) {
 			return YES;
 		}
 	}
 	
+	// Check the modified values.
+	for (var i = 0; i < [modifiedValues count]; i++) {
+		if ([[modifiedValues objectAtIndex:i] isEqualToString:valueSearchString]) {
+			return YES;
+		}
+	}
+
 	return NO;
 }
 
@@ -152,9 +159,22 @@
 	var numReplacements = 0;
 	
 	for (var i = 0; i < [originalValues count]; i++) {
-		var /* CPString */ rowValue = [self valueForRow:i];
-		if ([rowValue isEqualToString:valueSearchString]) {
-			[self saveModifiedValue:replacementString forRow:i];
+		var replaceRow = false;
+		// Check if the original value matches the valueSearchString.
+		if ([[originalValues objectAtIndex:i] isEqualToString:valueSearchString]) {
+			replaceRow = true;
+		}
+		
+		// Check if the modified value matches the valueSearchString.
+		if (i < [modifiedValues count]) {
+			if ([[modifiedValues objectAtIndex:i] isEqualToString:valueSearchString]) {
+				replaceRow = true;
+			}
+		}
+		
+		// If we have a match, replace the value.
+		if (replaceRow) {
+			[self saveModifiedValue:replacementString forRow:i]
 			numReplacements++;
 		}
 	}
