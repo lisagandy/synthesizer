@@ -88,7 +88,7 @@
 		[editValuesButton setImagePosition:CPImageOnly];
 		[self addSubview:editValuesButton];
 
-		saveButton = [[CPButton alloc] initWithFrame:CGRectMake(aFrame.origin.x + aFrame.size.width - 10 - 60, 4, 60, 34)];
+		saveButton = [[CPButton alloc] initWithFrame:CGRectMake(aFrame.origin.x + aFrame.size.width - 10 - 60, 3, 60, 34)];
 		[saveButton setBordered:NO];
 		[saveButton setFont:[CPFont systemFontOfSize:18]];
 		[saveButton setTextColor:[CPColor whiteColor]];
