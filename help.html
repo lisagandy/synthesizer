@@ -1,0 +1,44 @@
+<html>
+	<head>
+		<style type="text/css">
+			body {
+				font: 14px "Helvetica";
+				line-height: 18px;
+			}
+		</style>
+	</head>
+	<body>
+		<!-- We use these b and font tags because the CSS in the stylesheet was being ignored when it is embedded in a Cappuccino CPWebView. -->
+		<b><font color="#5D84EE">Introduction</font></b>
+		<p style="margin-top:3px;">The Column Merger is a web app that allows a user to merge multiple spreadsheets with similar column-based data into a single consolidated spreadsheet.  There are several tools in the Column Merger to assist the user during the process of merging the data.</p>
+		
+		<b><font color="#5D84EE">Column Groups</font></b>
+		<p style="margin-top:3px;">The primary feature of the Column Merger is the ability to create groups of columns.  Source spreadsheets may have columns with different names that really represent the same type of data.  For example one spreadsheet might have a column named race, while another may refer to the same data as ethnicity.  Column groups can bring the data from multiple columns together so the values can be analyzed as a single larger set of data.</p>
+		
+		<p>The main window is separated into two tables.  The table on the left is the Group List, and the table on the right is the Column List.  The Group List shows a list of all the column groups.  The first two rows are special groups to show “All” columns or “Not Grouped” columns.  When the All group is selected, the Column List will show all of the columns imported from every spreadsheet.  Similarly, when Not Grouped is selected, the Column List will show every column that isn’t a member of a column group.  Below these two special groups are all the user-created column groups.  Clicking on any of the user-created column groups will show the columns that belong to the selected group.  The user may also notice that there is a number next to each group name which denotes the number of columns in that specific group.</p>
+		
+		<p>To create a new column group, click on the + button in the upper left corner of the window.  An “Untitled Group” will be created and added to the Group List.  Click on the name (Untitled Group) text to change the name of the group.  This group name will be used to name the merged column data in the exported spreadsheet.</p>
+		
+		<p>Columns can be added to the new group by dragging them from the Column List.  First select a group that has some columns in it (the All or Not Grouped rows are a good place to start).  Then drag any of the items from the Column List over to the desired group in the Group List.  Columns can only be a member of a single column group, so if you add a column to a new group, it will be removed from any previous group it may have belonged to.</p>
+		
+		<p>When a column group is selected, a delete “x” button will be shown next to the group name.  Clicking this button will remove the column group.  Columns belonging to that group will still be available by clicking the All or Not Grouped rows in the Group List.</p>
+		
+		<b><font color="#5D84EE">Column List</font></b>
+		<p style="margin-top:3px;">The Column List can be quite extensive depending on the number or size of spreadsheets you are working with.  Columns are listed in alphabetical order by column name.  The spreadsheet name that each column originated in is also shown.  Double-clicking a row in the Column List will open the Value Editor for that column.  More information about the Value Editor can be found in the “Editing Values” section below.</p>
+		
+		<p>To make it easier to find a column, you can use the Filter Columns search box on the right side of the page header.  Simply type in a few characters to narrow down the column list.  You can also type in a name of a spreadsheet to show just the columns from that spreadsheet.</p>
+		
+		<b><font color="#5D84EE">Editing Values</font></b>
+		<p style="margin-top:3px;">Another tool included in the Column Merger is a Value Editor.  Open the Value Editor by clicking on the pencil button in the upper left corner of the page.  The Value Editor is composed of two tabs:  the Edit Column Values tab and the Find and Replace tab.</p>
+		
+		<p>The Edit Column Values tab offers direct editing of the spreadsheet data being worked with.  Select the column name from the popup at the top, and you will see a table with the Original and Modified values for that column.  You can click on a row in the Modified Value column to change it.  Changes are automatically saved when you click on another row.</p>
+		
+		<p>The Find and Replace tab can be used to edit multiple values at the same time.  To use this tab, type a search term into the Find text box.  The search is case-sensitive, and it will match both the original value of a column and a modified column value.  The table below shows a list of columns matching the specified search term.  Double-clicking on any of the matching columns will switch to the Edit Column Values tab to show the values of that column.  Back in the Find and Replace tab, to replace matching values just type the new value into the Replace text box.  If you would like to replace values only in certain columns, you can check or uncheck the box next to each column name.  When you are done, click the Replace button to apply the operation to the selected columns.</p>
+		
+		<b><font color="#5D84EE">Final Merge</font></b>
+		<p style="margin-top:3px;">Once columns have been grouped and values have been edited appropriate, the final step is to Merge the data into a new spreadsheet.  Clicking the Merge button in the upper right corner of the page will generate the new spreadsheet and download it to your computer.</p>
+		
+		<p>While you might be done with the Column Merger at this point, you can continue to make changes in the app after downloading a new merged spreadsheet.  Simply make another adjustment in the app and click the Merge button again to download an updated spreadsheet.  Using this method, you can continue to make incremental updates to your work and watch how the merge changes along the way.</p>
+	</body>
+</html>
+	

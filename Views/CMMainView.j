@@ -17,12 +17,14 @@
 @import "CMMainItemView.j"
 @import "../Model/CMColumnManager.j"
 @import "CMEditorView.j"
+@import "CMHelpView.j"
 
 @implementation CMMainView : CPView
 {
 	CPScrollView scrollView;
 	CPTableView tableView;
 	CMEditorView valueEditor;
+	CMHelpView helpView;
 		
 	CMColumnGroup selectedGroup;
 	
@@ -182,6 +184,28 @@
 - (void)closeValueEditor {
 	if (valueEditor) {
 		[valueEditor removeFromSuperview];
+	}
+}
+
+- (void)openHelp {
+	if (!helpView) {
+		helpView = [[CMHelpView alloc] initWithFrame:CGRectMake(0, 0, 500, 500)];
+		[helpView setMainView:self];
+		[helpView setAutoresizingMask:CPViewMinXMargin | CPViewMaxXMargin | CPViewMinYMargin | CPViewMaxYMargin | CPViewHeightSizable];
+	}
+	
+	var /* CPView */ sv = [self superview];
+	var /* CGRect */ svBounds = [sv bounds];
+	
+	var /* CGSize */ helpSize = CGSizeMake(MIN(500, svBounds.size.width - 100), MIN(700, svBounds.size.height - 100));
+	
+	[helpView setFrame:CGRectMake((svBounds.size.width - helpSize.width) * 0.5, (svBounds.size.height - helpSize.height) * 0.5, helpSize.width, helpSize.height)];
+	[sv addSubview:helpView];
+}
+
+- (void)closeHelp {
+	if (helpView) {
+		[helpView removeFromSuperview];
 	}
 }
 

@@ -20,6 +20,7 @@
 	
 	CPButton addGroupButton;
 	CPButton editValuesButton;
+	CPButton helpButton;
 	CPTextField title;
 	CPSearchField searchField;
 	CPButton saveButton;
@@ -87,6 +88,20 @@
 		[editValuesButton setAction:@selector(editValues:)];
 		[editValuesButton setImagePosition:CPImageOnly];
 		[self addSubview:editValuesButton];
+
+		helpButton = [[CPButton alloc] initWithFrame:CGRectMake(aFrame.size.height * 2, 0, aFrame.size.height, aFrame.size.height)];
+		[helpButton setBordered:NO];
+		[helpButton setAutoresizingMask:CPViewMaxXMargin | CPViewMaxYMargin];
+		[helpButton setImage:[[CPImage alloc] initWithContentsOfFile:("Resources/help.png") size:CPSizeMake(21, 21)]];
+/*
+		[helpButton setTextColor:[CPColor whiteColor]];
+		[helpButton setTitle:"?"];
+		[helpButton setFont:[CPFont systemFontOfSize:24]];
+*/
+		[helpButton setTarget:self];
+		[helpButton setAction:@selector(showHelp:)];
+		[helpButton setImagePosition:CPImageOnly];
+		[self addSubview:helpButton];
 
 		saveButton = [[CPButton alloc] initWithFrame:CGRectMake(aFrame.origin.x + aFrame.size.width - 10 - 60, 3, 60, 34)];
 		[saveButton setBordered:NO];
@@ -185,6 +200,10 @@
 
 - (IBAction)editValues:(CPButton)sender {
 	[mainView openValueEditor:nil];
+}
+
+- (IBAction)showHelp:(CPButton)sender {
+		[mainView openHelp];
 }
 
 @end
