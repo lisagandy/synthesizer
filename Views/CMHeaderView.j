@@ -35,7 +35,7 @@
 		[title setAlignment:CPCenterTextAlignment];
 		[title setVerticalAlignment:CPCenterVerticalTextAlignment];
 		[title setTextColor:[CPColor whiteColor]];
-		[title setStringValue:@"Column Merger"];
+		[title setStringValue:@"Metamorphosys"];
 		[self addSubview:title];
 		
 		searchField = [[ToolbarSearchField alloc] initWithFrame:CGRectMake(aFrame.origin.x + aFrame.size.width - 10 - 140 - 60 - 10, aFrame.origin.y + 5, 140, 30)];
@@ -137,7 +137,7 @@
 	csvText = csvText.replace(/"/g, '&#34;');
 
 
-	var /* CPString */ html = "<form id=\"downloadForm\" method=\"POST\" action=\"/cgi-bin/columnmerger-download.cgi\"><input type=\"hidden\" name=\"csv_text\" value=\"" + csvText + "\"></form><script>document.getElementById('downloadForm').submit(); </script>'";
+	var /* CPString */ html = "<form id=\"downloadForm\" method=\"POST\" action=\"/cgi-bin/columnmerger-download.cgi \"><input type=\"hidden\" name=\"csv_text\" value=\"" + csvText + "\"></form><script>document.getElementById('downloadForm').submit(); </script>'";
 
 /*
 	var myWindow = window.open("", "MsgWindow", "width=300, height=200");
