@@ -38,3 +38,14 @@ Check out the repository into the base directory of a domain or virtual domain o
 You must specify an input values file name when calling the URL, or the app won't show any columns or groups.  To do this, you'll add a # to the end of the URL and follow that by a filename.  For example, http://domain/#ABC
 
 Web browsers are very aggressive on caching the Objective-J code, and a simple Reload will often not update with the latest code changes.  You'll want to disable the browser cache while making any modifications to the code.  In Chrome you can do this by right-clicking on the web page and choosing Inspect Element to show the Developer panel.  Click the gear button and make sure "Disable cache (while DevTools is open)" is enabled under the General settings.  Then when reloading the page, use the Command-Shift-R shortcut to force the page to reload all data.
+
+NLP backend software
+--------
+Check out the repository at https://github.com/lisagandy/AutomaticClusterLabels for the NLP backend software
+
+Test system
+----------
+A test system with sample data can be found at https://cps-xena.cps.cmich.edu/uploader
+
+
+
