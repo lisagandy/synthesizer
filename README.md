@@ -1,7 +1,7 @@
-mergecolumns
+Synthesizer
 ============
 
-This is a web application that uses the Cappuccino framework (http://www.cappuccino-project.org) to group columns from multiple spreadsheets.  It is designed to run at the root level of a domain or virtual domain, but a few adjustments could be made to run it in a sub-directory of a domain as well.
+Note: The Sythesizer Application is available at http://cps-xena.cps.cmich.edu/uploader. Synthesizer is a web application that uses the Cappuccino framework (http://www.cappuccino-project.org) to group columns from multiple spreadsheets.  It is designed to run at the root level of a domain or virtual domain, but a few adjustments could be made to run it in a sub-directory of a domain as well.
 
 File Structure
 --------------
